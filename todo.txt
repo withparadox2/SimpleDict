@@ -1,0 +1,5 @@
+Input text and list the result
+Load dict file from lingoes
+Show detail of a word
+Jump between words inside the app
+Stay in status bar and keep listening coping-event
