@@ -210,9 +210,9 @@ u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool appen
 
 void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int offsetXml) {
 
-    ifstream ifs(inflatedFile.c_str(), ifstream::binary);
+    Dict* dict = new Dict(inflatedFile);
+    ifstream& ifs = dict->ifsInflated;
     if(ifs.is_open()) {
-        Dict* dict = new Dict(inflatedFile);
         pathToDict.insert(std::pair<string, Dict*>(inflatedFile, dict));
 
         int dataLen = 10;
@@ -228,8 +228,8 @@ void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int of
         for (int i = 0; i < defTotal; i++) {
             readWord(ifs, dict, offsetDefs, offsetXml, dataLen, idxData, i);
         }
-        ifs.close();
     } else {
+        delete dict;
         cout << "not open :" << inflatedFile << endl;
     }
 }
@@ -243,12 +243,6 @@ void readWord(ifstream& ifs, Dict* dict, int offsetWords, int offsetXml,
     int refs = idxData.at(3);
     int currentWordOffset = idxData.at(4);
     int currentXmlOffset = idxData.at(5);
-
-
-    ifs.seekg(offsetXml + lastXmlPos, ifs.beg);
-    int xmlLen = currentXmlOffset - lastXmlPos;
-    unique_ptr<char> xml(getChars(xmlLen));
-    ifs.read(xml.get(), xmlLen);
 
     ifs.seekg(offsetWords + lastWordPos);
     int wordLen = currentWordOffset - lastWordPos;
@@ -341,6 +335,3 @@ Dict* prepare(const char* filePath) {
     }
     return nullptr;
 }
-
-
-
