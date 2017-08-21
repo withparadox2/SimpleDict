@@ -48,6 +48,7 @@ public class HomeActivity extends Activity {
     final BaseAdapter adapter = new MyAdapter();
     lv.setAdapter(adapter);
 
+    final TextView tvContent = (TextView) findViewById(R.id.tv_content);
     EditText editText = (EditText) findViewById(R.id.et_search);
     editText.addTextChangedListener(new TextWatcher() {
       @Override public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -68,7 +69,7 @@ public class HomeActivity extends Activity {
       @Override public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Word word = (Word) view.getTag();
         String text = NativeLib.getContent(word.ref);
-        Toast.makeText(HomeActivity.this, text, Toast.LENGTH_SHORT).show();
+        tvContent.setText(text);
       }
     });
   }
