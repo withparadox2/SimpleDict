@@ -5,14 +5,12 @@
 #include <vector>
 #include <map>
 extern "C" {
-#include "zlib.h"
+#include <zlib.h>
 }
 #include <string.h>
-#include "dict.h"
+#include "main.h"
 
 using namespace std;
-
-using std::unique_ptr;
 
 typedef uint8_t u1;
 typedef uint16_t u2;
@@ -33,9 +31,6 @@ void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int of
 void readWord(ifstream& ifs, Dict* dict, int offsetWords, int offsetXml, int dataLen,
        vector<int>& idxData, int i);
 void getIdxData(ifstream& ifs, int position, vector<int>& wordIdxData);
-int install(const char* filePath, bool prepare = false); 
-void release();
-Dict* prepare(const char* filePath);
 
 map<string, Dict*> pathToDict;
 
@@ -87,7 +82,7 @@ int main() {
     Dict* dict = prepare(file.c_str());
     if (dict) {
         //dict->printWords();
-        vector<Word*> list = dict->search("mot");
+        vector<Word*> list = dict->search("m");
         dict->printWordList(list);
     }
     release();

@@ -35,6 +35,10 @@ vector<Word*> Dict::search(const string& text) {
                 if (append) {
                     result.push_back(*iter);
                     iter++;
+                    // TODO avoid local reference table overflow
+                    if (result.size() > 100) {
+                        return result;
+                    }
                     continue;
                 } 
                 break;
