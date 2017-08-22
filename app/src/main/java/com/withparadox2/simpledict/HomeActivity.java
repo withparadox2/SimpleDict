@@ -1,6 +1,7 @@
 package com.withparadox2.simpledict;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -13,7 +14,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.io.File;
 import java.util.List;
 
@@ -31,24 +31,12 @@ public class HomeActivity extends Activity {
     File extStore = Environment.getExternalStorageDirectory();
     String file = new File(extStore.getPath(), "Collins.ld2").toString();
 
-    long time = System.currentTimeMillis();
-    int result = NativeLib.install(file);
-
     final long dict = NativeLib.prepare(file);
-
-    //List<Word> list = NativeLib.search(dict, "m");
-    //StringBuilder sb = new StringBuilder();
-    //for (Word w : list) {
-    //  sb.append(w.text);
-    //  sb.append("\n");
-    //}
-    //Toast.makeText(this, sb.toString(), Toast.LENGTH_SHORT).show();
 
     ListView lv = (ListView) findViewById(R.id.list_view);
     final BaseAdapter adapter = new MyAdapter();
     lv.setAdapter(adapter);
 
-    final TextView tvContent = (TextView) findViewById(R.id.tv_content);
     EditText editText = (EditText) findViewById(R.id.et_search);
     editText.addTextChangedListener(new TextWatcher() {
       @Override public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -68,8 +56,9 @@ public class HomeActivity extends Activity {
     lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Word word = (Word) view.getTag();
-        String text = NativeLib.getContent(word.ref);
-        tvContent.setText(text);
+        Intent intent = new Intent(HomeActivity.this, WordContentActivity.class);
+        intent.putExtra(WordContentActivity.KEY_WORD, word);
+        startActivity(intent);
       }
     });
   }
