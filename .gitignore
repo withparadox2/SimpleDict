@@ -8,3 +8,5 @@
 /captures
 /parse
 .externalNativeBuild
+obj/
+libs/**/.so
