@@ -14,7 +14,7 @@ jlong jni_prepare(JNIEnv* env, jclass clazz, jstring fileName) {
     const char* fileNameChars = env->GetStringUTFChars(fileName, 0);
     Dict* dict = prepare(fileNameChars);
     env->ReleaseStringUTFChars(fileName, fileNameChars);
-    return dict;
+    return (jlong)dict;
 }
 jstring jni_get_content (JNIEnv* env, jclass clazz, jlong wordHandle) {
     Word* word = (Word*)wordHandle;

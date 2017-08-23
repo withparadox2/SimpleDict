@@ -32,7 +32,7 @@ public:
 
     ifstream ifsInflated;
     ~Dict();
-    printWords();
+    void printWords();
 
     bool isClose();
     vector<Word*> search(const string& text);

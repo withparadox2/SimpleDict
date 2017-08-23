@@ -9,7 +9,7 @@ Dict::~Dict() {
     }
     ifsInflated.close();
 }
-Dict::printWords() {
+void Dict::printWords() {
     for(auto iter = wordList.begin(); iter != wordList.end(); iter++) {
         cout << (*iter)->text << endl;
         cout << (*iter)->getContent() << endl;
