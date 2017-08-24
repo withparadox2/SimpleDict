@@ -10,8 +10,8 @@ extern "C" {
 #include <string.h>
 #include "main.h"
 
-#define RE_CHAR(X) reinterpret_cast<char*>(X)
-#define RE_UCHAR(X) reinterpret_cast<unsigned char*>(X)
+#define RE_CHAR(X) reinterpret_cast<char*>(&X[0])
+#define RE_UCHAR(X) reinterpret_cast<unsigned char*>(&X[0])
 
 using namespace std;
 
@@ -143,13 +143,11 @@ u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool appen
     }
 
     input.seekg(offset, input.beg);
-    input.read(RE_CHAR(&bufIn[0]), length);
-    unsigned char* bufInPtr = RE_UCHAR(&bufIn[0]);
-    unsigned char* bufOutPtr = RE_UCHAR(&bufOut[0]);
+    input.read(RE_CHAR(bufIn), length);
     
     uLong tlen = bufOut.size();
     int result;
-    while ((result = uncompress(RE_UCHAR(&bufOut[0]), &tlen, RE_UCHAR(&bufIn[0]), length)) == Z_BUF_ERROR) {
+    while ((result = uncompress(RE_UCHAR(bufOut), &tlen, RE_UCHAR(bufIn), length)) == Z_BUF_ERROR) {
         bufOut.resize(2 * bufOut.size());
         tlen = bufOut.size();
     }
@@ -159,7 +157,7 @@ u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool appen
     }  
 
 
-    ofs.write(RE_CHAR(&bufOut[0]), tlen);
+    ofs.write(RE_CHAR(bufOut), tlen);
 }
 
 void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int offsetXml) {
