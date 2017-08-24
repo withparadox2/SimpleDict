@@ -37,6 +37,13 @@ public class HomeActivity extends Activity {
     final BaseAdapter adapter = new MyAdapter();
     lv.setAdapter(adapter);
 
+    findViewById(R.id.tv_setting).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        startActivity(new Intent(HomeActivity.this, SettingActivity.class));
+      }
+    });
+
     EditText editText = (EditText) findViewById(R.id.et_search);
     editText.addTextChangedListener(new TextWatcher() {
       @Override public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

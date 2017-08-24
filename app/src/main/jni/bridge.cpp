@@ -16,6 +16,7 @@ jlong jni_prepare(JNIEnv* env, jclass clazz, jstring fileName) {
     env->ReleaseStringUTFChars(fileName, fileNameChars);
     return (jlong)dict;
 }
+
 jstring jni_get_content (JNIEnv* env, jclass clazz, jlong wordHandle) {
     Word* word = (Word*)wordHandle;
     string text = word->getContent();

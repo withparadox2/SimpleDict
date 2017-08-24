@@ -192,7 +192,7 @@ u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool appen
     unsigned char* buf = new unsigned char[8 * length];
     
     uLong tlen;
-    if(uncompress(buf, &tlen, text, length) != Z_OK) {  
+    if(uncompress(buf, &tlen, text, length) != Z_OK) {
         cout << "uncompress failed!\n"; 
     }  
 
