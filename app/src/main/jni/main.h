@@ -11,7 +11,18 @@ typedef int16_t s2;
 typedef int32_t s4;
 typedef int64_t s8;
 
+
+void process(ifstream&, string& inflatedFile, bool prepare);
+void readDictionary(ifstream& input, int offset, string& inflatedFile, bool prepare);
+void inflate(ifstream& input, vector<int>& deflateStreams, ofstream& ofs);
+u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool append, vector<char>& bufIn, vector<char>& bufOut);
+void testCompress();
+void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int offsetXml);
+void readWord(ifstream& ifs, Dict* dict, int offsetWords, int offsetXml, int dataLen,
+       vector<int>& idxData, int i);
+void getIdxData(ifstream& ifs, int position, vector<int>& wordIdxData);
 char* getChars(int len);
+
 
 template<typename T> 
 T readNum(ifstream& input, int len) {
@@ -57,6 +68,9 @@ u8 readu8(ifstream& input){
     return readNum<u8>(input, 8);
 }
 
+/**
+ * return: 0 install succed; -1 install failed
+ */
 int install(const char* filePath, bool prepare = false); 
 void release();
 Dict* prepare(const char* filePath);

@@ -10,20 +10,10 @@ extern "C" {
 #include <string.h>
 #include "main.h"
 
-#define RE_CHAR(X) reinterpret_cast<char*>(&X[0])
-#define RE_UCHAR(X) reinterpret_cast<unsigned char*>(&X[0])
+#define RE_CHAR_V(X) reinterpret_cast<char*>(&X[0])
+#define RE_UCHAR_V(X) reinterpret_cast<unsigned char*>(&X[0])
 
 using namespace std;
-
-void process(ifstream&, string& inflatedFile, bool prepare);
-void readDictionary(ifstream& input, int offset, string& inflatedFile, bool prepare);
-void inflate(ifstream& input, vector<int>& deflateStreams, ofstream& ofs);
-u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool append, vector<char>& bufIn, vector<char>& bufOut);
-void testCompress();
-void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int offsetXml);
-void readWord(ifstream& ifs, Dict* dict, int offsetWords, int offsetXml, int dataLen,
-       vector<int>& idxData, int i);
-void getIdxData(ifstream& ifs, int position, vector<int>& wordIdxData);
 
 map<string, Dict*> pathToDict;
 
@@ -137,27 +127,27 @@ void inflate(ifstream& input, vector<int>& deflateStreams, ofstream& ofs) {
     }
 }
 
-u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool append, vector<char>& bufIn, vector<char>& bufOut) {
+u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool append, 
+        vector<char>& bufIn, vector<char>& bufOut) {
     if (bufIn.size() < length) {
         bufIn.resize(length);
     }
 
     input.seekg(offset, input.beg);
-    input.read(RE_CHAR(bufIn), length);
+    input.read(RE_CHAR_V(bufIn), length);
     
     uLong tlen = bufOut.size();
     int result;
-    while ((result = uncompress(RE_UCHAR(bufOut), &tlen, RE_UCHAR(bufIn), length)) == Z_BUF_ERROR) {
+    while ((result = uncompress(RE_UCHAR_V(bufOut), &tlen, RE_UCHAR_V(bufIn), length)) == Z_BUF_ERROR) {
         bufOut.resize(2 * bufOut.size());
         tlen = bufOut.size();
     }
 
     if(result != Z_OK) {
         cout << "uncompress failed!" << "result = " << result << endl; 
+    } else {
+        ofs.write(RE_CHAR_V(bufOut), tlen);
     }  
-
-
-    ofs.write(RE_CHAR(bufOut), tlen);
 }
 
 void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int offsetXml) {
@@ -218,21 +208,6 @@ void getIdxData(ifstream& ifs, int position, vector<int>& wordIdxData) {
     wordIdxData.at(3) = readu1(ifs);
     wordIdxData.at(4) = readu4(ifs);
     wordIdxData.at(5) = readu4(ifs);
-}
-
-vector<string> splitFilePath(const char* filePath) {
-    string fullPath(filePath);
-    vector<string> paths;
-
-    //TODO why "/\\"
-    auto splitIndex = fullPath.find_last_of("/\\");
-    if (splitIndex != string::npos) {
-        paths.push_back(fullPath.substr(0, splitIndex));
-        paths.push_back(fullPath.substr(splitIndex + 1));
-    } else {
-        paths.push_back(fullPath);
-    }
-    return paths;
 }
 
 bool isFileExist(const string& filePath) {
