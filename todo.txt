@@ -10,3 +10,5 @@ A better look
   Multiple mode
 Jump between words inside the app
 Stay in status bar and keep listening coping-event
+
+Require permission

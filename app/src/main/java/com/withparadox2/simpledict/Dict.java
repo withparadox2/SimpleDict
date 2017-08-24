@@ -38,4 +38,17 @@ public class Dict {
     public String getName() {
         return name;
     }
+
+
+    public File getFile() {
+        return file;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public boolean isInstalled() {
+        return isInstalled;
+    }
 }

@@ -1,4 +1,5 @@
 <resources>
   <string name="app_name">SimpleDict</string>
     <string name="setting">设</string>
+  <string name="install">install</string>
 </resources>
