@@ -12,3 +12,6 @@ obj/
 libs/**/.so
 *.inflated
 *.exe
+*.ld2
+*.swp
+*.un~

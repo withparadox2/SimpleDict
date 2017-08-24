@@ -10,22 +10,15 @@ extern "C" {
 #include <string.h>
 #include "main.h"
 
+#define RE_CHAR(X) reinterpret_cast<char*>(X)
+#define RE_UCHAR(X) reinterpret_cast<unsigned char*>(X)
+
 using namespace std;
 
-typedef uint8_t u1;
-typedef uint16_t u2;
-typedef uint32_t u4;
-typedef uint64_t u8;
-typedef int8_t s1;
-typedef int16_t s2;
-typedef int32_t s4;
-typedef int64_t s8;
-
 void process(ifstream&, string& inflatedFile, bool prepare);
-char* getChars(int len);
 void readDictionary(ifstream& input, int offset, string& inflatedFile, bool prepare);
 void inflate(ifstream& input, vector<int>& deflateStreams, ofstream& ofs);
-u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool append);
+u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool append, vector<char>& bufIn, vector<char>& bufOut);
 void testCompress();
 void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int offsetXml);
 void readWord(ifstream& ifs, Dict* dict, int offsetWords, int offsetXml, int dataLen,
@@ -34,55 +27,13 @@ void getIdxData(ifstream& ifs, int position, vector<int>& wordIdxData);
 
 map<string, Dict*> pathToDict;
 
-template<typename T> 
-T readNum(ifstream& input, int len) {
-    char* cs = getChars(len);    
-    input.read(cs, len);
-    T result = 0;
-    for (int i = 0; i < len; i++) {
-        result |= ((T)(u1)*(cs + i)) << 8 * i;
-    }
-    delete[] cs;
-    return result;
-}
-
-template<typename T>
-T readNum(ifstream& input, int offset, int len) {
-    input.seekg(offset, input.beg);
-    readNum<T>(input, len);
-}
-u1 readu1(ifstream& input, int offset) {
-    return readNum<u1>(input, offset, 1);
-}
-u2 readu2(ifstream& input, int offset) {
-    return readNum<u2>(input, offset, 2);
-}
-u4 readu4(ifstream& input, int offset) {
-    return readNum<u4>(input, offset, 4);
-}
-u8 readu8(ifstream& input, int offset) {
-    return readNum<u8>(input, offset, 8);
-}
-
-u1 readu1(ifstream& input) {
-    return readNum<u1>(input, 1);
-}
-u2 readu2(ifstream& input) {
-    return readNum<u2>(input, 2);
-}
-u4 readu4(ifstream& input) {
-    return readNum<u4>(input, 4);
-}
-u8 readu8(ifstream& input){
-    return readNum<u8>(input, 8);
-}
 int main() {
-    string file("newori.ld2");
-    install(file.c_str());
+    string file("Oxford+Advanced+Learner's+English-Chinese+Dictionary.ld2");
+    install(file.c_str(), true);
     Dict* dict = prepare(file.c_str());
     if (dict) {
         //dict->printWords();
-        vector<Word*> list = dict->search("m");
+        vector<Word*> list = dict->search("a");
         dict->printWordList(list);
     }
     release();
@@ -107,7 +58,7 @@ void process(ifstream& input, string& inflatedFile, bool prepare = false) {
    cout << "version : " << readu2(input, 0x18) << "."
         << readu2(input, 0x1a) << endl;
 
-   cout << "id : " << hex << readu8(input, 0x1c) << endl;
+   cout<< "id : " << hex << readu8(input, 0x1c) << endl;
    
    int offsetData = readu4(input, 0x5c) + 0x60;
    cout << "info addr : " << offsetData << endl;
@@ -174,33 +125,41 @@ void inflate(ifstream& input, vector<int>& deflateStreams, ofstream& ofs) {
     int offset = -1;
     int lastOffset = startOffset;
     bool append = false;
+
+    vector<char> bufOut;
+    bufOut.resize(8 * 1024);
+    vector<char> bufIn;
     for (auto iter = deflateStreams.begin(); iter != deflateStreams.end(); iter++) {
         offset = startOffset + *iter;
-        decompress(ofs, input, lastOffset, offset - lastOffset, append);
+        decompress(ofs, input, lastOffset, offset - lastOffset, append, bufIn, bufOut);
         append = true;
         lastOffset = offset;
     }
 }
 
-u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool append) {
-    char* data = new char[length];
-    input.seekg(offset, input.beg);
-    input.read(data, length);
-    unsigned char* text = reinterpret_cast<unsigned char*>(data);
+u8 decompress(ofstream& ofs, ifstream& input, int offset, int length, bool append, vector<char>& bufIn, vector<char>& bufOut) {
+    if (bufIn.size() < length) {
+        bufIn.resize(length);
+    }
 
-    //TODO we need to get an exact size of uncompressed data
-    unsigned char* buf = new unsigned char[8 * length];
+    input.seekg(offset, input.beg);
+    input.read(RE_CHAR(&bufIn[0]), length);
+    unsigned char* bufInPtr = RE_UCHAR(&bufIn[0]);
+    unsigned char* bufOutPtr = RE_UCHAR(&bufOut[0]);
     
-    uLong tlen;
-    if(uncompress(buf, &tlen, text, length) != Z_OK) {
-        cout << "uncompress failed!\n"; 
+    uLong tlen = bufOut.size();
+    int result;
+    while ((result = uncompress(RE_UCHAR(&bufOut[0]), &tlen, RE_UCHAR(&bufIn[0]), length)) == Z_BUF_ERROR) {
+        bufOut.resize(2 * bufOut.size());
+        tlen = bufOut.size();
+    }
+
+    if(result != Z_OK) {
+        cout << "uncompress failed!" << "result = " << result << endl; 
     }  
 
-    const char* outData = reinterpret_cast<const char*>(buf);
 
-    ofs.write(outData, tlen);
-    delete[] buf;
-    delete[] data;
+    ofs.write(RE_CHAR(&bufOut[0]), tlen);
 }
 
 void extract(string& inflatedFile, vector<int>& idxArray, int offsetDefs, int offsetXml) {

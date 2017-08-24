@@ -53,7 +53,7 @@ vector<Word*> Dict::search(const string& text) {
 void Dict::printWordList(vector<Word*>& wordList) {
     for(auto iter = wordList.begin(); iter != wordList.end(); iter++) {
         cout << (*iter)->text << endl;
-        cout << (*iter)->getContent() << endl;
+        //cout << (*iter)->getContent() << endl;
     }
 }
 string Word::getContent() {
