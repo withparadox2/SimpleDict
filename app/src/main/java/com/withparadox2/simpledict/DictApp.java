@@ -3,7 +3,7 @@ package com.withparadox2.simpledict;
 import android.app.Application;
 
 /**
- * Created by gsd on 2017/8/25.
+ * Created by withparadox2 on 2017/8/25.
  */
 
 public class DictApp extends Application {

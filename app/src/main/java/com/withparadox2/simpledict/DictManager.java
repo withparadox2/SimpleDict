@@ -3,7 +3,7 @@ package com.withparadox2.simpledict;
 import java.io.File;
 
 /**
- * Created by gsd on 2017/8/24.
+ * Created by withparadox2 on 2017/8/24.
  */
 
 public class DictManager {

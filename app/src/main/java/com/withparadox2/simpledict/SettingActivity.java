@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by gsd on 2017/8/24.
+ * Created by withparadox2 on 2017/8/24.
  */
 
 public class SettingActivity extends Activity {
