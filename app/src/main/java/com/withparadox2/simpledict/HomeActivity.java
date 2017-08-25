@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.io.File;
 import java.util.List;
 
@@ -22,77 +23,88 @@ import java.util.List;
  */
 
 public class HomeActivity extends Activity {
-  private List<Word> wordList;
+    private List<Word> wordList;
 
-  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_home);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
 
-    File extStore = Environment.getExternalStorageDirectory();
-    String file = new File(extStore.getPath(), "Collins.ld2").toString();
+        ListView lv = (ListView) findViewById(R.id.list_view);
+        final BaseAdapter adapter = new MyAdapter();
+        lv.setAdapter(adapter);
 
-    final long dict = NativeLib.prepare(file);
+        findViewById(R.id.tv_setting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this, SettingActivity.class));
+            }
+        });
 
-    ListView lv = (ListView) findViewById(R.id.list_view);
-    final BaseAdapter adapter = new MyAdapter();
-    lv.setAdapter(adapter);
+        EditText editText = (EditText) findViewById(R.id.et_search);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-    findViewById(R.id.tv_setting).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        startActivity(new Intent(HomeActivity.this, SettingActivity.class));
-      }
-    });
+            }
 
-    EditText editText = (EditText) findViewById(R.id.et_search);
-    editText.addTextChangedListener(new TextWatcher() {
-      @Override public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Dict dict = DictApp.getInstance().getActiveDict();
+                if (dict == null) {
+                    Toast.makeText(HomeActivity.this, "Please install dict first!",
+                        Toast.LENGTH_SHORT).show();
 
-      }
+                } else {
+                    wordList = NativeLib.search(dict.getRef(), charSequence.toString());
+                    adapter.notifyDataSetChanged();
+                }
+            }
 
-      @Override public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        wordList = NativeLib.search(dict, charSequence.toString());
-        adapter.notifyDataSetChanged();
-      }
+            @Override
+            public void afterTextChanged(Editable editable) {
 
-      @Override public void afterTextChanged(Editable editable) {
+            }
+        });
 
-      }
-    });
-
-    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Word word = (Word) view.getTag();
-        Intent intent = new Intent(HomeActivity.this, WordContentActivity.class);
-        intent.putExtra(WordContentActivity.KEY_WORD, word);
-        startActivity(intent);
-      }
-    });
-  }
-
-  class MyAdapter extends BaseAdapter {
-
-    @Override public int getCount() {
-      return wordList == null ? 0 : wordList.size();
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Word word = (Word) view.getTag();
+                Intent intent = new Intent(HomeActivity.this, WordContentActivity.class);
+                intent.putExtra(WordContentActivity.KEY_WORD, word);
+                startActivity(intent);
+            }
+        });
     }
 
-    @Override public Word getItem(int i) {
-      return wordList.get(i);
-    }
+    class MyAdapter extends BaseAdapter {
 
-    @Override public long getItemId(int i) {
-      return 0;
-    }
+        @Override
+        public int getCount() {
+            return wordList == null ? 0 : wordList.size();
+        }
 
-    @Override public View getView(int i, View view, ViewGroup viewGroup) {
-      if (view == null) {
-        view = new TextView(HomeActivity.this);
-        view.setPadding(20, 15, 20, 15);
-      }
-      TextView tv = (TextView) view;
-      tv.setText(getItem(i).text);
-      tv.setTag(getItem(i));
-      return view;
+        @Override
+        public Word getItem(int i) {
+            return wordList.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if (view == null) {
+                view = new TextView(HomeActivity.this);
+                view.setPadding(20, 15, 20, 15);
+            }
+            TextView tv = (TextView) view;
+            tv.setText(getItem(i).text);
+            tv.setTag(getItem(i));
+            return view;
+        }
     }
-  }
 }

@@ -7,7 +7,7 @@ import java.io.File;
  */
 
 public class Dict {
-    private int ref;
+    private long ref;
     private String name;
     private File file;
     private boolean isInstalled;
@@ -24,6 +24,9 @@ public class Dict {
     }
 
     public boolean equals(Dict obj) {
+        if (obj == null) {
+            return false;
+        }
         return this.name.equals(obj.name);
     }
 
@@ -39,7 +42,6 @@ public class Dict {
         return name;
     }
 
-
     public File getFile() {
         return file;
     }
@@ -50,5 +52,29 @@ public class Dict {
 
     public boolean isInstalled() {
         return isInstalled;
+    }
+
+    public long getRef() {
+        return ref;
+    }
+
+    public void setRef(long ref) {
+        this.ref = ref;
+    }
+
+    public boolean isReady() {
+        return ref != 0;
+    }
+
+    public void prepare() {
+        ref = NativeLib.prepare(file.getPath());
+    }
+
+    public Dict copy() {
+        Dict d = new Dict(name, file);
+        d.ref = this.ref;
+        d.isInstalled = this.isInstalled;
+        d.isSelected = this.isSelected;
+        return d;
     }
 }

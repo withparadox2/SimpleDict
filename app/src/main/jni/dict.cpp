@@ -10,9 +10,10 @@ Dict::~Dict() {
     ifsInflated.close();
 }
 void Dict::printWords() {
+    int times = 0;
     for(auto iter = wordList.begin(); iter != wordList.end(); iter++) {
         cout << (*iter)->text << endl;
-        cout << (*iter)->getContent() << endl;
+        //cout << (*iter)->getContent() << endl;
     }
 }
 bool Dict::isClose() {

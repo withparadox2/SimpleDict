@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -33,9 +34,32 @@ public class SettingActivity extends Activity {
         mAdapter = new DictAdapter();
         mListView.setAdapter(mAdapter);
 
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                for (Dict d : mDicts) {
+                    d.setIsSelected(false);
+                }
+                Dict dict = mDicts.get(position);
+                if (!dict.isReady()) {
+                    dict.prepare();
+                }
+                if (dict.isReady()) {
+                    dict.setIsSelected(true);
+                    DictApp.getInstance().setActiveDict(dict.copy());
+                    Toast.makeText(SettingActivity.this, "You can search now.", Toast.LENGTH_SHORT)
+                        .show();
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(SettingActivity.this, "Prepare dict failed.", Toast.LENGTH_SHORT)
+                        .show();
+                }
+            }
+        });
         loadDicts();
     }
 
+    //TODO only load once
     private void loadDicts() {
         new Thread(new Runnable() {
             @Override
@@ -48,18 +72,19 @@ public class SettingActivity extends Activity {
                 final File[] files = dir.listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
-                        return name.lastIndexOf("ld2") > 0;
+                        return name.lastIndexOf("ld2") == name.length() - 3;
                     }
                 });
 
                 SettingActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Dict activeDict = DictApp.getInstance().getActiveDict();
                         for (File file : files) {
                             Dict dict = new Dict(file);
                             dict.setIsInstalled(DictManager.isInstalled(file));
-                            dict.setIsSelected(false);
-                            mDicts.add(new Dict(file));
+                            dict.setIsSelected(dict.equals(activeDict));
+                            mDicts.add(dict);
                         }
                         mAdapter.notifyDataSetChanged();
                     }

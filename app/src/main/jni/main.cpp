@@ -4,6 +4,9 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <algorithm>
+#include <functional>
+
 extern "C" {
 #include <zlib.h>
 }
@@ -18,12 +21,12 @@ using namespace std;
 map<string, Dict*> pathToDict;
 
 int main() {
-    string file("Oxford+Advanced+Learner's+English-Chinese+Dictionary.ld2");
+    string file("Oxford Advanced Learner's English-Chinese Dictionary.ld2");
     install(file.c_str(), true);
     Dict* dict = prepare(file.c_str());
     if (dict) {
         //dict->printWords();
-        vector<Word*> list = dict->search("a");
+        vector<Word*> list = dict->search("ab");
         dict->printWordList(list);
     }
     release();
@@ -33,6 +36,50 @@ char* getChars(int len) {
     char* chars = new char[len + 1];
     *(chars + len) = 0;
     return chars;
+}
+
+void sortWords(vector<Word*>& wordList) {
+    sort(wordList.begin(), wordList.end(), [](Word* lh, Word* rh) {
+                int lhSize = lh->text.size();
+                int rhSize = rh->text.size();
+                int i = 0;
+                while (i < lhSize && i < rhSize) {
+                    if (lh->text[i] == rh->text[i]) {
+                        i++;
+                    } else {
+                        return lh->text[i] < rh->text[i];
+                    }
+                }
+                //TODO return true will crash, why?
+                return false;
+            });
+    cout << wordList.size() << endl;
+}
+
+u1 readu1(ifstream& input, int offset) {
+    return readNum<u1>(input, offset, 1);
+}
+u2 readu2(ifstream& input, int offset) {
+    return readNum<u2>(input, offset, 2);
+}
+u4 readu4(ifstream& input, int offset) {
+    return readNum<u4>(input, offset, 4);
+}
+u8 readu8(ifstream& input, int offset) {
+    return readNum<u8>(input, offset, 8);
+}
+
+u1 readu1(ifstream& input) {
+    return readNum<u1>(input, 1);
+}
+u2 readu2(ifstream& input) {
+    return readNum<u2>(input, 2);
+}
+u4 readu4(ifstream& input) {
+    return readNum<u4>(input, 4);
+}
+u8 readu8(ifstream& input){
+    return readNum<u8>(input, 8);
 }
 
 void process(ifstream& input, string& inflatedFile, bool prepare = false) {
@@ -258,6 +305,9 @@ Dict* prepare(const char* filePath) {
 
     auto it = pathToDict.find(inflatedPath);
     if (it != pathToDict.end()) {
+        if (it->second) {
+            sortWords(it->second->wordList);
+        }
         return it->second;
     }
     return nullptr;

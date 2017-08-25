@@ -22,6 +22,7 @@ void readWord(ifstream& ifs, Dict* dict, int offsetWords, int offsetXml, int dat
        vector<int>& idxData, int i);
 void getIdxData(ifstream& ifs, int position, vector<int>& wordIdxData);
 char* getChars(int len);
+void sortWords(vector<Word*>& wordList);
 
 
 template<typename T> 
@@ -41,31 +42,6 @@ template<typename T>
 T readNum(ifstream& input, int offset, int len) {
     input.seekg(offset, input.beg);
     readNum<T>(input, len);
-}
-u1 readu1(ifstream& input, int offset) {
-    return readNum<u1>(input, offset, 1);
-}
-u2 readu2(ifstream& input, int offset) {
-    return readNum<u2>(input, offset, 2);
-}
-u4 readu4(ifstream& input, int offset) {
-    return readNum<u4>(input, offset, 4);
-}
-u8 readu8(ifstream& input, int offset) {
-    return readNum<u8>(input, offset, 8);
-}
-
-u1 readu1(ifstream& input) {
-    return readNum<u1>(input, 1);
-}
-u2 readu2(ifstream& input) {
-    return readNum<u2>(input, 2);
-}
-u4 readu4(ifstream& input) {
-    return readNum<u4>(input, 4);
-}
-u8 readu8(ifstream& input){
-    return readNum<u8>(input, 8);
 }
 
 /**
