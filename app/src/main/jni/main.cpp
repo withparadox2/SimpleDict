@@ -23,9 +23,7 @@ map<string, Dict*> pathToDict;
 int main() {
     installDict("oxford+advanced+learner's+english-chinese+dictionary.ld2");
     installDict("newori.ld2");
-    vector<unique_ptr<SearchItem>> list = searchSelectedDicts("mo");
-    cout << "address = " << hex << &list << endl;
-    cout << "address item1 = " << hex << &list[0] << endl;
+    vector<shared_ptr<SearchItem>> list = searchSelectedDicts("mo");
     for (auto& item : list) {
         item->print();
     }
@@ -310,13 +308,7 @@ Dict* prepare(const char* filePath) {
     return nullptr;
 }
 
-/**
- * It is insteresting to return a vecotr containing unique_ptr,
- * we are aware that a new vector will be constructed with an action of copying
- * all items to the new vector if everything is under normal flow (i.e. no RVO). 
- * While unique_ptr can not by copied, so we may fuck up without RVO.
- */ 
-vector<unique_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
+vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
     vector<vector<Word*>> allWords;
     for (auto& pair : pathToDict) {
         Dict* dict = pair.second;
@@ -325,7 +317,7 @@ vector<unique_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
         }
     }
     
-    vector<unique_ptr<SearchItem>> searchList;
+    vector<shared_ptr<SearchItem>> searchList;
     map<string, SearchItem*> wordToPtr;
     for (auto& wordList : allWords) {
         for (auto& wordPtr : wordList) {
@@ -333,26 +325,17 @@ vector<unique_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
             if (cache != wordToPtr.end()) {
                 cache->second->wordList.push_back(wordPtr);
             } else {
-                unique_ptr<SearchItem> item(new SearchItem);
+                shared_ptr<SearchItem> item(new SearchItem);
                 item->text = wordPtr->text;
                 item->wordList.push_back(wordPtr);
                 wordToPtr.insert(std::pair<string, SearchItem*>(item->text, item.get()));
-                // move must be placed last, since contents in item will be 
-                // destroyed after move.
-                // It's illegal to copy unique_ptr, so we have to use move here.
-                searchList.push_back(std::move(item));
+                searchList.push_back(item);
             }
         }
     }
 
-    SortWord<unique_ptr<SearchItem>> sortObj;
-    sort(searchList.begin(), searchList.end(), sortObj);
-
-    for (auto& ptr : searchList) {
-        ptr->print();
-    }
-    cout << "address = " << hex << &searchList << endl;
-    cout << "address item1 = " << hex << &searchList[0] << endl;
+    sort(searchList.begin(), searchList.end(),
+            SortWord<shared_ptr<SearchItem>>());
     return searchList;
 }
 

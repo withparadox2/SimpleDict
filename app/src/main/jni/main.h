@@ -23,7 +23,7 @@ void readWord(ifstream& ifs, Dict* dict, int offsetWords, int offsetXml, int dat
 void getIdxData(ifstream& ifs, int position, vector<int>& wordIdxData);
 char* getChars(int len);
 void sortWords(vector<Word*>& wordList);
-vector<unique_ptr<SearchItem>> searchSelectedDicts(const char* searchText);
+vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText);
 void installDict(const char* path, bool isSelected = true);
 
 
