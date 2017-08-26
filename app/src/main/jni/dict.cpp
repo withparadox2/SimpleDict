@@ -1,7 +1,7 @@
 ﻿#include "dict.h"
 #include <iostream>
 
-Dict::Dict(string& inflatedPath) : ifsInflated(inflatedPath.c_str(), ifstream::binary) {}
+Dict::Dict(string& inflatedPath) : ifsInflated(inflatedPath.c_str(), ifstream::binary), inflatedPath(inflatedPath), isSelected(false) {}
 
 Dict::~Dict() {
     for (auto word : wordList) {
@@ -36,8 +36,7 @@ vector<Word*> Dict::search(const string& text) {
                 if (append) {
                     result.push_back(*iter);
                     iter++;
-                    // TODO avoid local reference table overflow
-                    if (result.size() > 100) {
+                    if (result.size() > 15) {
                         return result;
                     }
                     continue;
@@ -57,6 +56,11 @@ void Dict::printWordList(vector<Word*>& wordList) {
         //cout << (*iter)->getContent() << endl;
     }
 }
+
+void Dict::setSelected(bool isSelected) {
+    this->isSelected = isSelected;
+}
+
 string Word::getContent() {
     if (content.size() == 0) {
         readContent();
@@ -68,4 +72,27 @@ void Word::readContent() {
     char* data = const_cast<char*>(content.c_str());
     dict->ifsInflated.seekg(contentPos, dict->ifsInflated.beg);
     dict->ifsInflated.read(data, contentSize);
+}
+
+void SearchItem::print() {
+    cout << "=============" << endl;
+    cout << this->text << endl;
+    for (auto word : wordList) {
+        cout << word->dict->inflatedPath << endl;
+    }
+}
+
+bool sortWord(const string& lh, const string& rh) {
+    int lhSize = lh.size();
+    int rhSize = rh.size();
+    int i = 0;
+    while (i < lhSize && i < rhSize) {
+        if (lh[i] == rh[i]) {
+            i++;
+        } else {
+            return lh[i] < rh[i];
+        }
+    }
+    //TODO return true will crash, why?
+    return lhSize < rhSize;
 }

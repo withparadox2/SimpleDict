@@ -1,11 +1,11 @@
-﻿#include <iostream>
+﻿//Special thanks to Xiaoyun Zhu
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <memory>
 #include <vector>
 #include <map>
 #include <algorithm>
-#include <functional>
 
 extern "C" {
 #include <zlib.h>
@@ -21,15 +21,23 @@ using namespace std;
 map<string, Dict*> pathToDict;
 
 int main() {
-    string file("Oxford Advanced Learner's English-Chinese Dictionary.ld2");
-    install(file.c_str(), true);
-    Dict* dict = prepare(file.c_str());
-    if (dict) {
-        //dict->printWords();
-        vector<Word*> list = dict->search("ab");
-        dict->printWordList(list);
+    installDict("oxford+advanced+learner's+english-chinese+dictionary.ld2");
+    installDict("newori.ld2");
+    vector<unique_ptr<SearchItem>> list = searchSelectedDicts("mo");
+    cout << "address = " << hex << &list << endl;
+    cout << "address item1 = " << hex << &list[0] << endl;
+    for (auto& item : list) {
+        item->print();
     }
     release();
+}
+
+void installDict(const char* path, bool isSelected) {
+    install(path, true);
+    Dict* dict = prepare(path);
+    if (dict) {
+        dict->setSelected(isSelected);
+    }
 }
 
 char* getChars(int len) {
@@ -39,20 +47,8 @@ char* getChars(int len) {
 }
 
 void sortWords(vector<Word*>& wordList) {
-    sort(wordList.begin(), wordList.end(), [](Word* lh, Word* rh) {
-                int lhSize = lh->text.size();
-                int rhSize = rh->text.size();
-                int i = 0;
-                while (i < lhSize && i < rhSize) {
-                    if (lh->text[i] == rh->text[i]) {
-                        i++;
-                    } else {
-                        return lh->text[i] < rh->text[i];
-                    }
-                }
-                //TODO return true will crash, why?
-                return false;
-            });
+    SortWord<Word*> sortObj;
+    sort(wordList.begin(), wordList.end(), sortObj);
     cout << wordList.size() << endl;
 }
 
@@ -284,9 +280,10 @@ int install(const char* filePath, bool force) {
 }
 
 void release() {
-    for (auto& pair : pathToDict) {
-        delete pair.second;
-        pathToDict.erase(pair.first);
+    for (auto iter = pathToDict.begin(); iter != pathToDict.end(); iter++) {
+        delete iter->second;
+        //TODO crash if invoke erase here
+        //pathToDict.erase(iter);
     }
 }
 
@@ -312,3 +309,50 @@ Dict* prepare(const char* filePath) {
     }
     return nullptr;
 }
+
+/**
+ * It is insteresting to return a vecotr containing unique_ptr,
+ * we are aware that a new vector will be constructed with an action of copying
+ * all items to the new vector if everything is under normal flow (i.e. no RVO). 
+ * While unique_ptr can not by copied, so we may fuck up without RVO.
+ */ 
+vector<unique_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
+    vector<vector<Word*>> allWords;
+    for (auto& pair : pathToDict) {
+        Dict* dict = pair.second;
+        if (dict && dict->isSelected) {
+            allWords.push_back(dict->search(searchText));
+        }
+    }
+    
+    vector<unique_ptr<SearchItem>> searchList;
+    map<string, SearchItem*> wordToPtr;
+    for (auto& wordList : allWords) {
+        for (auto& wordPtr : wordList) {
+            auto cache = wordToPtr.find(wordPtr->text);
+            if (cache != wordToPtr.end()) {
+                cache->second->wordList.push_back(wordPtr);
+            } else {
+                unique_ptr<SearchItem> item(new SearchItem);
+                item->text = wordPtr->text;
+                item->wordList.push_back(wordPtr);
+                wordToPtr.insert(std::pair<string, SearchItem*>(item->text, item.get()));
+                // move must be placed last, since contents in item will be 
+                // destroyed after move.
+                // It's illegal to copy unique_ptr, so we have to use move here.
+                searchList.push_back(std::move(item));
+            }
+        }
+    }
+
+    SortWord<unique_ptr<SearchItem>> sortObj;
+    sort(searchList.begin(), searchList.end(), sortObj);
+
+    for (auto& ptr : searchList) {
+        ptr->print();
+    }
+    cout << "address = " << hex << &searchList << endl;
+    cout << "address item1 = " << hex << &searchList[0] << endl;
+    return searchList;
+}
+
