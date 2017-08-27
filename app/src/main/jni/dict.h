@@ -15,6 +15,7 @@ public:
 
     ifstream ifsInflated;
     string inflatedPath;
+    string name;
     ~Dict();
     void printWords();
 

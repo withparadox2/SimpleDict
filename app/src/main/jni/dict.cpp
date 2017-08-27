@@ -1,7 +1,16 @@
 ﻿#include "dict.h"
 #include <iostream>
 
-Dict::Dict(string& inflatedPath) : ifsInflated(inflatedPath.c_str(), ifstream::binary), inflatedPath(inflatedPath), isSelected(false) {}
+Dict::Dict(string& inflatedPath) : ifsInflated(inflatedPath.c_str(), ifstream::binary), inflatedPath(inflatedPath), isSelected(false) {
+    auto from = inflatedPath.find_last_of("/\\");
+    auto to = inflatedPath.find(".ld2");
+    from = from == string::npos ? 0 : from + 1;
+    if (to != string::npos) {
+        this->name = inflatedPath.substr(from, to - from);
+    } else {
+        this->name = inflatedPath;
+    }
+}
 
 Dict::~Dict() {
     for (auto word : wordList) {
@@ -36,7 +45,7 @@ vector<Word*> Dict::search(const string& text) {
                 if (append) {
                     result.push_back(*iter);
                     iter++;
-                    if (result.size() > 15) {
+                    if (result.size() > 10) {
                         return result;
                     }
                     continue;

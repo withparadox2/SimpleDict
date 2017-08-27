@@ -1,4 +1,4 @@
-﻿//Special thanks to Xiaoyun Zhu
+﻿//Special thanks to Xiaoyun Zhu and http://bbs.pediy.com/thread-209325.htm
 #include <iostream>
 #include <fstream>
 #include <string>

@@ -25,7 +25,7 @@ jstring jni_get_content (JNIEnv* env, jclass clazz, jlong wordHandle) {
 
 jstring jni_get_dict_name (JNIEnv* env, jclass clazz, jlong wordHandle) {
     Word* word = (Word*)wordHandle;
-    string text = word->dict->inflatedPath;
+    string text = word->dict->name;
     return env->NewStringUTF(text.c_str());
 }
 
