@@ -22,152 +22,149 @@ import java.util.List;
  */
 
 public class SettingActivity extends Activity {
-    private ListView mListView;
-    private DictAdapter mAdapter;
-    private List<Dict> mDicts = new ArrayList<>();
+  private ListView mListView;
+  private DictAdapter mAdapter;
+  private List<Dict> mDicts = new ArrayList<>();
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
-        mListView = (ListView) findViewById(R.id.list_view);
-        mAdapter = new DictAdapter();
-        mListView.setAdapter(mAdapter);
+  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_setting);
+    mListView = (ListView) findViewById(R.id.list_view);
+    mAdapter = new DictAdapter();
+    mListView.setAdapter(mAdapter);
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                for (Dict d : mDicts) {
-                    d.setIsSelected(false);
-                }
-                Dict dict = mDicts.get(position);
-                if (!dict.isReady()) {
-                    dict.prepare();
-                }
-                if (dict.isReady()) {
-                    dict.setIsSelected(true);
-                    DictApp.getInstance().setActiveDict(dict.copy());
-                    Toast.makeText(SettingActivity.this, "You can search now.", Toast.LENGTH_SHORT)
-                        .show();
-                    mAdapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(SettingActivity.this, "Prepare dict failed.", Toast.LENGTH_SHORT)
-                        .show();
-                }
-            }
+    mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        for (Dict d : mDicts) {
+          d.setIsSelected(false);
+        }
+        Dict dict = mDicts.get(position);
+        if (!dict.isReady()) {
+          dict.prepare();
+        }
+        if (dict.isReady()) {
+          dict.setIsSelected(true);
+          DictApp.getInstance().setActiveDict(dict.copy());
+          Toast.makeText(SettingActivity.this, "You can search now.", Toast.LENGTH_SHORT).show();
+          mAdapter.notifyDataSetChanged();
+        } else {
+          Toast.makeText(SettingActivity.this, "Prepare dict failed.", Toast.LENGTH_SHORT).show();
+        }
+      }
+    });
+    loadDicts();
+  }
+
+  //TODO only load once
+  private void loadDicts() {
+    new Thread(new Runnable() {
+      @Override public void run() {
+        File dir = FileUtil.fromPath(FileUtil.DICT_DIR);
+        if (!dir.exists()) {
+          return;
+        }
+
+        final File[] files = dir.listFiles(new FilenameFilter() {
+          @Override public boolean accept(File dir, String name) {
+            return name.lastIndexOf("ld2") == name.length() - 3;
+          }
         });
-        loadDicts();
-    }
 
-    //TODO only load once
-    private void loadDicts() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                File dir = FileUtil.fromPath(FileUtil.DICT_DIR);
-                if (!dir.exists()) {
-                    return;
-                }
-
-                final File[] files = dir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.lastIndexOf("ld2") == name.length() - 3;
-                    }
-                });
-
-                SettingActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Dict activeDict = DictApp.getInstance().getActiveDict();
-                        for (File file : files) {
-                            Dict dict = new Dict(file);
-                            dict.setIsInstalled(DictManager.isInstalled(file));
-                            dict.setIsSelected(dict.equals(activeDict));
-                            mDicts.add(dict);
-                        }
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
+        if (files == null) {
+          SettingActivity.this.runOnUiThread(new Runnable() {
+            @Override public void run() {
+              Toast.makeText(SettingActivity.this,
+                  "Please copy dicts to /sdcard/simpledict or allow permission", Toast.LENGTH_SHORT)
+                  .show();
             }
-        }).start();
-    }
-
-    class DictAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mDicts.size();
+          });
+          return;
         }
 
-        @Override
-        public Dict getItem(int position) {
-            return mDicts.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup parent) {
-            if (view == null) {
-                view = LayoutInflater.from(SettingActivity.this)
-                    .inflate(R.layout.item_dict_manage, parent, false);
-                view.setTag(new ViewHolder(view));
+        SettingActivity.this.runOnUiThread(new Runnable() {
+          @Override public void run() {
+            Dict activeDict = DictApp.getInstance().getActiveDict();
+            for (File file : files) {
+              Dict dict = new Dict(file);
+              dict.setIsInstalled(DictManager.isInstalled(file));
+              dict.setIsSelected(dict.equals(activeDict));
+              mDicts.add(dict);
             }
+            mAdapter.notifyDataSetChanged();
+          }
+        });
+      }
+    }).start();
+  }
 
-            ViewHolder viewHolder = (ViewHolder) view.getTag();
-            final Dict dict = getItem(position);
-            viewHolder.iconSelected.setVisibility(dict.isSelected() ? View.VISIBLE : View.GONE);
-            viewHolder.btnInstall.setVisibility(dict.isInstalled() ? View.GONE : View.VISIBLE);
-            viewHolder.tvName.setText(dict.getName());
+  class DictAdapter extends BaseAdapter {
 
-            viewHolder.btnInstall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    install(dict);
-                }
-            });
-            return view;
-        }
+    @Override public int getCount() {
+      return mDicts.size();
     }
 
-    private void install(final Dict dict) {
-        if (dict.isInstalled()) {
-            return;
-        }
+    @Override public Dict getItem(int position) {
+      return mDicts.get(position);
+    }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final int state = NativeLib.install(dict.getFile().getPath());
-                SettingActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (state == -1) {
-                            Toast.makeText(SettingActivity.this, "安装失败", Toast.LENGTH_SHORT).show();
-                        } else {
-                            dict.setIsInstalled(true);
-                            Toast.makeText(SettingActivity.this, "安装成功", Toast.LENGTH_SHORT).show();
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
+    @Override public long getItemId(int position) {
+      return 0;
+    }
+
+    @Override public View getView(int position, View view, ViewGroup parent) {
+      if (view == null) {
+        view = LayoutInflater.from(SettingActivity.this)
+            .inflate(R.layout.item_dict_manage, parent, false);
+        view.setTag(new ViewHolder(view));
+      }
+
+      ViewHolder viewHolder = (ViewHolder) view.getTag();
+      final Dict dict = getItem(position);
+      viewHolder.iconSelected.setVisibility(dict.isSelected() ? View.VISIBLE : View.GONE);
+      viewHolder.btnInstall.setVisibility(dict.isInstalled() ? View.GONE : View.VISIBLE);
+      viewHolder.tvName.setText(dict.getName());
+
+      viewHolder.btnInstall.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          install(dict);
+        }
+      });
+      return view;
+    }
+  }
+
+  private void install(final Dict dict) {
+    if (dict.isInstalled()) {
+      return;
+    }
+
+    new Thread(new Runnable() {
+      @Override public void run() {
+        final int state = NativeLib.install(dict.getFile().getPath());
+        SettingActivity.this.runOnUiThread(new Runnable() {
+          @Override public void run() {
+            if (state == -1) {
+              Toast.makeText(SettingActivity.this, "安装失败", Toast.LENGTH_SHORT).show();
+            } else {
+              dict.setIsInstalled(true);
+              Toast.makeText(SettingActivity.this, "安装成功", Toast.LENGTH_SHORT).show();
+              mAdapter.notifyDataSetChanged();
             }
-        }).start();
-    }
+          }
+        });
+      }
+    }).start();
+  }
 
-    static class ViewHolder {
-        View iconSelected;
-        TextView tvName;
-        Button btnInstall;
+  static class ViewHolder {
+    View iconSelected;
+    TextView tvName;
+    Button btnInstall;
 
-        ViewHolder(View view) {
-            iconSelected = view.findViewById(R.id.tv_selected);
-            tvName = (TextView) view.findViewById(R.id.tv_dict_name);
-            btnInstall = (Button) view.findViewById(R.id.btn_install);
-        }
+    ViewHolder(View view) {
+      iconSelected = view.findViewById(R.id.tv_selected);
+      tvName = (TextView) view.findViewById(R.id.tv_dict_name);
+      btnInstall = (Button) view.findViewById(R.id.btn_install);
     }
+  }
 }

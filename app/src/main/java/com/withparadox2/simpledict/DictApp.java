@@ -1,29 +1,40 @@
 package com.withparadox2.simpledict;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Message;
 
 /**
  * Created by withparadox2 on 2017/8/25.
  */
 
 public class DictApp extends Application {
-    private static DictApp sInstance;
-    private Dict activeDict;
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        sInstance = this;
+  private static DictApp sInstance;
+  private Dict activeDict;
+  private Handler mHandler = new Handler() {
+    @Override public void handleMessage(Message msg) {
+      super.handleMessage(msg);
     }
+  };
 
-    public static DictApp getInstance() {
-        return sInstance;
-    }
+  @Override public void onCreate() {
+    super.onCreate();
+    sInstance = this;
+  }
 
-    public Dict getActiveDict() {
-        return this.activeDict;
-    }
+  public static DictApp getInstance() {
+    return sInstance;
+  }
 
-    public void setActiveDict(Dict dict) {
-        this.activeDict = dict;
-    }
+  public Dict getActiveDict() {
+    return this.activeDict;
+  }
+
+  public void setActiveDict(Dict dict) {
+    this.activeDict = dict;
+  }
+
+  public void run(Runnable action) {
+    mHandler.post(action);
+  }
 }

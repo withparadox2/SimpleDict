@@ -24,9 +24,6 @@ int main() {
     installDict("oxford+advanced+learner's+english-chinese+dictionary.ld2");
     installDict("newori.ld2");
     vector<shared_ptr<SearchItem>> list = searchSelectedDicts("mo");
-    for (auto& item : list) {
-        item->print();
-    }
     release();
 }
 
@@ -307,7 +304,8 @@ Dict* prepare(const char* filePath) {
     }
     return nullptr;
 }
-
+ 
+//I make a mistake, with rvo unique_ptr is also acceptable.
 vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
     vector<vector<Word*>> allWords;
     for (auto& pair : pathToDict) {
@@ -338,4 +336,3 @@ vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
             SortWord<shared_ptr<SearchItem>>());
     return searchList;
 }
-

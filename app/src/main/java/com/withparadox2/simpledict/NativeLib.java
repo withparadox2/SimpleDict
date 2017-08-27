@@ -13,6 +13,9 @@ public class NativeLib {
 
   public static native int install(String file);
   public static native long prepare(String file);
-  public static native List<Word> search(long dictHandle, String text);
+  public static native List<SearchItem> search(String text);
   public static native String getContent(long wordHandle);
+  public static native String getDictName(long wordHandle);
+  public static native boolean activeDict(long dictHandle);
+  public static native boolean unactiveDict(long dictHandle);
 }

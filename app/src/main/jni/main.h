@@ -1,6 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 #include "dict.h"
+#include <memory>
 
 typedef uint8_t u1;
 typedef uint16_t u2;
@@ -25,7 +26,6 @@ char* getChars(int len);
 void sortWords(vector<Word*>& wordList);
 vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText);
 void installDict(const char* path, bool isSelected = true);
-
 
 template<typename T> 
 T readNum(ifstream& input, int len) {

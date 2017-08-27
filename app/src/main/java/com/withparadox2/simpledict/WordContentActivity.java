@@ -12,7 +12,7 @@ import android.widget.TextView;
 public class WordContentActivity extends Activity {
   private TextView tvWord;
   private TextView tvContent;
-  public static final String KEY_WORD = "word";
+  public static final String KEY_SEARCH_ITEM = "search_item";
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -20,9 +20,15 @@ public class WordContentActivity extends Activity {
     tvContent = (TextView) findViewById(R.id.tv_content);
     tvWord = (TextView) findViewById(R.id.tv_word);
 
-    Word word = (Word) getIntent().getSerializableExtra(KEY_WORD);
-    tvWord.setText(word.text);
-    tvContent.setText(formatContent(NativeLib.getContent(word.ref)));
+    SearchItem searchItem = (SearchItem) getIntent().getSerializableExtra(KEY_SEARCH_ITEM);
+    tvWord.setText(searchItem.text);
+
+    StringBuilder sb = new StringBuilder();
+    for (Word word : searchItem.wordList) {
+      sb.append(NativeLib.getDictName(word.ref)).append("\n\n");
+      sb.append(formatContent(NativeLib.getContent(word.ref))).append("\n\n\n");
+    }
+    tvContent.setText(sb.toString());
   }
 
   private String formatContent(String text) {
