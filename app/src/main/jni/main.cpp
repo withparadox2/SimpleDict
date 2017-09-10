@@ -92,7 +92,7 @@ void process(ifstream& input, string& inflatedFile, bool prepare = false) {
            }
        } else if (type == 4 && !prepare) {
            input.seekg(sectionPos + 8, input.beg);
-           extractRes(input, inflatedFile, sectionPos + 8);
+           extractRes(input, getResFolder(inflatedFile), sectionPos + 8);
        }
        sectionPos += 8 + size;
    }
@@ -125,9 +125,9 @@ void extractRes(ifstream& ifs, string folder, int pos) {
 
     vector<u4> encryIndexs;
     for (int i = 0; i <= partCount; i++) {
-        cout <<hex << "ifs  pos = " << pos + i * 4 << "  tellg = " << endl;
+        //cout <<hex << "ifs  pos = " << pos + i * 4 << "  tellg = " << endl;
         int current = readu4(ifs);
-        cout <<hex<<current<<"--";
+        //cout <<hex<<current<<"--";
         encryIndexs.push_back(current);
 
         pre = current;
@@ -141,7 +141,7 @@ void extractRes(ifstream& ifs, string folder, int pos) {
     for (int i = 1; i <= partCount; i++) {
         u4 start = pos + encryIndexs[i-1];
         u4 size = encryIndexs[i] -  encryIndexs[i-1];
-        cout << "encr size = " << size << endl;
+        //cout << "encr size = " << size << endl;
 
         vector<char> buffIn;
         buffIn.resize(size);
@@ -155,10 +155,10 @@ void extractRes(ifstream& ifs, string folder, int pos) {
         unsigned char* buffOutPtr = RE_UCHAR_V(resultData) + resultSize;
 
         int result = uncompress(buffOutPtr, &tlen, RE_UCHAR_V(buffIn), size);
-        cout << "result = " << result << " result size = "<< tlen << endl;
+        //cout << "result = " << result << " result size = "<< tlen << endl;
         resultSize += tlen;
     }
-    cout << "vec sie = " << resultData.size() << " final size = "<< resultSize<< endl; 
+    //cout << "vec sie = " << resultData.size() << " final size = "<< resultSize<< endl; 
 
     int cellCout = dwKeyPos / 8;
 
@@ -177,12 +177,12 @@ void extractRes(ifstream& ifs, string folder, int pos) {
         int keyPosEnd = keyPosList[i] ;
 
         string fileName(rPtr + dwKeyPos + keyPos, keyPosEnd - keyPos);
-        cout << fileName << endl;
+        //cout << fileName << endl;
 
         int dataPos = dataPosList[i - 1];
         int dataPosEnd = dataPosList[i];
 
-        string filePath = folder + "123/" + fileName;
+        string filePath = folder + "/" + fileName;
         ofstream ofs(filePath.c_str(), ofstream::out | ofstream::binary);
 
         if (ofs.is_open()) {
@@ -428,3 +428,26 @@ vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
             SortWord<shared_ptr<SearchItem>>());
     return searchList;
 }
+
+string getResFolder(string filePath) {
+    string folder;
+    auto split = filePath.find_last_of("/\\");
+    string parent;
+    string fileName = filePath;
+    if (split != string::npos) {
+        parent = filePath.substr(0, split);
+        fileName = filePath.substr(split + 1);
+    }
+
+    split = fileName.find_first_of(".");
+    if (split != string::npos) {
+        fileName = fileName.substr(0, split);
+    } else {
+        fileName = fileName + "-res";
+    }
+    folder = parent + "/" + fileName;
+    return folder;
+}
+
+
+

@@ -26,6 +26,7 @@ char* getChars(int len);
 void sortWords(vector<Word*>& wordList);
 vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText);
 void installDict(const char* path, bool isSelected = true);
+string getResFolder(string filePath);
 
 u1 readu1(ifstream& input, int offset);
 u2 readu2(ifstream& input, int offset);
