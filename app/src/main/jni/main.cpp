@@ -22,7 +22,7 @@ map<string, Dict*> pathToDict;
 
 int main() {
     installDict("oxford+advanced+learner's+english-chinese+dictionary.ld2");
-    installDict("newori.ld2");
+    //installDict("newori.ld2");
     vector<shared_ptr<SearchItem>> list = searchSelectedDicts("mo");
     release();
 }
@@ -47,32 +47,7 @@ void sortWords(vector<Word*>& wordList) {
     cout << wordList.size() << endl;
 }
 
-u1 readu1(ifstream& input, int offset) {
-    return readNum<u1>(input, offset, 1);
-}
-u2 readu2(ifstream& input, int offset) {
-    return readNum<u2>(input, offset, 2);
-}
-u4 readu4(ifstream& input, int offset) {
-    return readNum<u4>(input, offset, 4);
-}
-u8 readu8(ifstream& input, int offset) {
-    return readNum<u8>(input, offset, 8);
-}
-
-u1 readu1(ifstream& input) {
-    return readNum<u1>(input, 1);
-}
-u2 readu2(ifstream& input) {
-    return readNum<u2>(input, 2);
-}
-u4 readu4(ifstream& input) {
-    return readNum<u4>(input, 4);
-}
-u8 readu8(ifstream& input){
-    return readNum<u8>(input, 8);
-}
-
+void extractRes(ifstream& ifs, string folder, int pos);
 void process(ifstream& input, string& inflatedFile, bool prepare = false) {
    input.seekg(0, input.end);
    int length = input.tellg();
@@ -88,16 +63,133 @@ void process(ifstream& input, string& inflatedFile, bool prepare = false) {
 
    cout<< "id : " << hex << readu8(input, 0x1c) << endl;
    
-   int offsetData = readu4(input, 0x5c) + 0x60;
-   cout << "info addr : " << offsetData << endl;
+   int sectionPos = 88;
 
-   int infoType = readu4(input, offsetData);
-   cout << "info type : " << infoType << endl;
+   while (true) {
+       if (sectionPos + 8 >= length) {
+           break;
+       }
+       input.seekg(sectionPos, input.beg);
+       int type = readu4(input);
+       int size = readu4(input);
+        
+       while (size % 8) {
+           size++;
+       }
 
-   if (infoType == 3) {
-       readDictionary(input, offsetData, inflatedFile, prepare);
+       cout << "type = " << type << endl;
+       cout << "sectionPos = " << sectionPos << endl;
+
+       if (type == 3) {
+           int offsetData = readu4(input, 0x5c) + 0x60;
+           cout << "info addr : " << offsetData << endl;
+
+           int infoType = readu4(input, offsetData);
+           cout << "info type : " << infoType << endl;
+
+           if (infoType == 3) {
+               readDictionary(input, offsetData, inflatedFile, prepare);
+           }
+       } else if (type == 4 && !prepare) {
+           input.seekg(sectionPos + 8, input.beg);
+           extractRes(input, inflatedFile, sectionPos + 8);
+       }
+       sectionPos += 8 + size;
    }
-   //TODO handle other situations
+
+}
+
+void extractRes(ifstream& ifs, string folder, int pos) {
+    u4 dwKeyPos = readu4(ifs);
+    cout << "dwKeyPos = " << dwKeyPos << endl;
+    cout << "cell count = " << (dwKeyPos / 8) << endl;
+    u4 dwKeySize = readu4(ifs);
+    cout << "dwKeySize = " << dwKeySize << endl;
+    cout << "dwDataSize = " << readu4(ifs)<< endl;
+    cout << "cbSizeEncrypt = " << readu4(ifs)<< endl;
+
+    u4 dwSizeDecrypt = readu4(ifs);
+    cout << "dwSizeDecrypt = " << dwSizeDecrypt << endl;
+    u4 dwSrcLen = readu4(ifs);
+    cout << "dwSctLen = " << dwSrcLen << endl;
+
+    int partCount = dwSizeDecrypt / dwSrcLen;
+    if (dwSizeDecrypt % dwSrcLen != 0) {
+        partCount++;
+    }
+    cout << "partCount = " << partCount << endl;
+
+    pos += 24;
+    ifs.seekg(pos, ifs.beg);
+    int pre = 0;
+
+    vector<u4> encryIndexs;
+    for (int i = 0; i <= partCount; i++) {
+        cout <<hex << "ifs  pos = " << pos + i * 4 << "  tellg = " << endl;
+        int current = readu4(ifs);
+        cout <<hex<<current<<"--";
+        encryIndexs.push_back(current);
+
+        pre = current;
+    }
+
+    //start of encry data
+    pos = pos + (partCount + 1) * 4;
+
+    vector<char> resultData;
+    int resultSize = 0;
+    for (int i = 1; i <= partCount; i++) {
+        u4 start = pos + encryIndexs[i-1];
+        u4 size = encryIndexs[i] -  encryIndexs[i-1];
+        cout << "encr size = " << size << endl;
+
+        vector<char> buffIn;
+        buffIn.resize(size);
+        ifs.seekg(start, ifs.beg);
+        ifs.read(RE_CHAR_V(buffIn), size);
+
+        if (resultData.size() - resultSize < dwSrcLen) {
+            resultData.resize(resultSize + dwSrcLen);
+        }
+        uLong tlen = dwSrcLen;
+        unsigned char* buffOutPtr = RE_UCHAR_V(resultData) + resultSize;
+
+        int result = uncompress(buffOutPtr, &tlen, RE_UCHAR_V(buffIn), size);
+        cout << "result = " << result << " result size = "<< tlen << endl;
+        resultSize += tlen;
+    }
+    cout << "vec sie = " << resultData.size() << " final size = "<< resultSize<< endl; 
+
+    int cellCout = dwKeyPos / 8;
+
+    char *rPtr = RE_CHAR_V(resultData);
+    vector<int> keyPosList;
+    vector<int> dataPosList;
+    for (int i = 0; i < cellCout; i++) {
+        int keyPos = fromChars(rPtr, i * 8);
+        int dataPos = fromChars(rPtr, i * 8 + 4);
+        keyPosList.push_back(keyPos);
+        dataPosList.push_back(dataPos);
+    }
+
+    for (int i = 1; i < cellCout; i++) {
+        int keyPos = keyPosList[i - 1];
+        int keyPosEnd = keyPosList[i] ;
+
+        string fileName(rPtr + dwKeyPos + keyPos, keyPosEnd - keyPos);
+        cout << fileName << endl;
+
+        int dataPos = dataPosList[i - 1];
+        int dataPosEnd = dataPosList[i];
+
+        string filePath = folder + "123/" + fileName;
+        ofstream ofs(filePath.c_str(), ofstream::out | ofstream::binary);
+
+        if (ofs.is_open()) {
+            ofs.write(rPtr + dwKeyPos + dwKeySize + dataPos, dataPosEnd - dataPos);
+            ofs.close();
+        }
+    }
 }
 
 void readDictionary(ifstream& input, int offsetWithIndex, string& inflatedFile, 

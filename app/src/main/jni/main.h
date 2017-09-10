@@ -27,6 +27,18 @@ void sortWords(vector<Word*>& wordList);
 vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText);
 void installDict(const char* path, bool isSelected = true);
 
+u1 readu1(ifstream& input, int offset);
+u2 readu2(ifstream& input, int offset);
+u4 readu4(ifstream& input, int offset);
+u8 readu8(ifstream& input, int offset);
+
+u1 readu1(ifstream& input);
+u2 readu2(ifstream& input);
+u4 readu4(ifstream& input);
+u8 readu8(ifstream& input);
+
+u4 fromChars(char* ptr, int pos);
+
 template<typename T> 
 T readNum(ifstream& input, int len) {
     char* cs = getChars(len);    
