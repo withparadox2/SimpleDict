@@ -1,5 +1,6 @@
-package com.withparadox2.simpledict;
+package com.withparadox2.simpledict.dict;
 
+import com.withparadox2.simpledict.NativeLib;
 import java.io.File;
 
 /**

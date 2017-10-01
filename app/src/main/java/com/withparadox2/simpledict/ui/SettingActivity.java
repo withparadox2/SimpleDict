@@ -1,4 +1,4 @@
-package com.withparadox2.simpledict;
+package com.withparadox2.simpledict.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,6 +12,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.withparadox2.simpledict.dict.Dict;
+import com.withparadox2.simpledict.DictApp;
+import com.withparadox2.simpledict.dict.DictManager;
+import com.withparadox2.simpledict.util.FileUtil;
+import com.withparadox2.simpledict.NativeLib;
+import com.withparadox2.simpledict.R;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;

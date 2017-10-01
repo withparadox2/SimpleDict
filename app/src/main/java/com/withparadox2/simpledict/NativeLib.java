@@ -1,5 +1,7 @@
 package com.withparadox2.simpledict;
 
+import com.withparadox2.simpledict.dict.SearchItem;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -12,10 +14,23 @@ public class NativeLib {
   }
 
   public static native int install(String file);
+
   public static native long prepare(String file);
+
   public static native List<SearchItem> search(String text);
+
   public static native String getContent(long wordHandle);
+
   public static native String getDictName(long wordHandle);
+
   public static native boolean activeDict(long dictHandle);
-  public static native boolean unactiveDict(long dictHandle);
+
+  public static native boolean deactiveDict(long dictHandle);
+
+  public static void createFolder(String path) {
+    File folder = new File(path);
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+  }
 }

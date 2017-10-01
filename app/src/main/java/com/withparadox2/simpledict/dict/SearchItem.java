@@ -1,4 +1,4 @@
-package com.withparadox2.simpledict;
+package com.withparadox2.simpledict.dict;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.ArrayList;
  */
 
 public class SearchItem implements Serializable {
-  String text;
-  ArrayList<Word> wordList;
+  public String text;
+  public ArrayList<Word> wordList;
   public SearchItem(String text, ArrayList<Word> wordList) {
     this.text = text;
     this.wordList = wordList;

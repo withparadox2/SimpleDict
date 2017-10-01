@@ -41,10 +41,10 @@ jobject jni_search(JNIEnv* env, jclass clazz, jstring text) {
 
     jmethodID list_add = env->GetMethodID(list_clazz, "add", "(Ljava/lang/Object;)Z");
 
-    jclass search_item_clazz = env->FindClass("com/withparadox2/simpledict/SearchItem");
+    jclass search_item_clazz = env->FindClass("com/withparadox2/simpledict/dict/SearchItem");
     jmethodID search_item_ctor = env->GetMethodID(search_item_clazz, "<init>", "(Ljava/lang/String;Ljava/util/ArrayList;)V");
 
-    jclass word_clazz = env->FindClass("com/withparadox2/simpledict/Word");
+    jclass word_clazz = env->FindClass("com/withparadox2/simpledict/dict/Word");
     jmethodID word_ctor = env->GetMethodID(word_clazz, "<init>", "(JLjava/lang/String;)V");
 
     for (auto& iter : searchItems) {
@@ -73,7 +73,7 @@ jboolean jni_active_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
     return JNI_FALSE;
 }
 
-jboolean jni_unactive_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
+jboolean jni_deactive_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
     Dict* dict = (Dict*) dictHandle;
     if (dict) {
         dict->setSelected(false);
@@ -114,9 +114,9 @@ static JNINativeMethod gMethods[] = {
         (void*)jni_active_dict
     },
     {
-        "unactiveDict",
+        "deactiveDict",
         "(J)Z",
-        (void*)jni_unactive_dict
+        (void*)jni_deactive_dict
     }
 };
 
@@ -140,14 +140,32 @@ int registerNatives(JNIEnv* env) {
   return JNI_TRUE;
 }
 
+JavaVM* g_JVM;
+
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-  JNIEnv* env = NULL;
-  jint result = -1;
-  if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
-    return -1;
-  }
-  if (!registerNatives(env)) {
-    return -1;
-  }
-  return JNI_VERSION_1_4;
+    g_JVM = vm;
+    JNIEnv* env = NULL;
+    jint result = -1;
+    if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
+        return -1;
+    }
+    if (!registerNatives(env)) {
+        return -1;
+    }
+    return JNI_VERSION_1_4;
+}
+
+
+JNIEnv* getJniEnv() {
+    JNIEnv* jni_env = 0;
+    g_JVM->AttachCurrentThread(&jni_env, 0);
+    return jni_env;
+}
+
+void createFolder(const char* path) {
+    JNIEnv* env = getJniEnv();
+    jclass native_clazz = env->FindClass(JNIREG_CLASS);
+    jmethodID create_folder_id = env->GetStaticMethodID(native_clazz, "createFolder", "(Ljava/lang/String;)V");
+    jstring path_str = env->NewStringUTF(path);
+    env->CallStaticVoidMethod(native_clazz, create_folder_id, path_str);
 }

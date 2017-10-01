@@ -13,14 +13,14 @@
 
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-    <activity android:name=".HomeActivity">
+    <activity android:name=".ui.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-    <activity android:name=".WordContentActivity"/>
-    <activity android:name=".SettingActivity"/>
+    <activity android:name=".ui.WordContentActivity"/>
+    <activity android:name=".ui.SettingActivity"/>
 
   </application>
 

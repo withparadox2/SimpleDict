@@ -1,4 +1,4 @@
-package com.withparadox2.simpledict;
+package com.withparadox2.simpledict.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +13,10 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.withparadox2.simpledict.dict.DictManager;
+import com.withparadox2.simpledict.NativeLib;
+import com.withparadox2.simpledict.R;
+import com.withparadox2.simpledict.dict.SearchItem;
 import java.util.List;
 
 /**

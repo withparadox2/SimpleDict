@@ -1,5 +1,8 @@
-package com.withparadox2.simpledict;
+package com.withparadox2.simpledict.dict;
 
+import com.withparadox2.simpledict.NativeLib;
+import com.withparadox2.simpledict.util.FileUtil;
+import com.withparadox2.simpledict.util.Util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;

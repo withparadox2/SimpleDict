@@ -1,4 +1,4 @@
-package com.withparadox2.simpledict;
+package com.withparadox2.simpledict.dict;
 
 import java.io.Serializable;
 

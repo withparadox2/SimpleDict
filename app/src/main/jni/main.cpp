@@ -100,6 +100,7 @@ void process(ifstream& input, string& inflatedFile, bool prepare = false) {
 }
 
 void extractRes(ifstream& ifs, string folder, int pos) {
+    createFolder(folder.c_str());
     u4 dwKeyPos = readu4(ifs);
     cout << "dwKeyPos = " << dwKeyPos << endl;
     cout << "cell count = " << (dwKeyPos / 8) << endl;

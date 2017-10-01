@@ -1,4 +1,4 @@
-package com.withparadox2.simpledict;
+package com.withparadox2.simpledict.util;
 
 import android.os.Environment;
 import java.io.File;

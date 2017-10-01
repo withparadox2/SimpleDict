@@ -1,6 +1,7 @@
-package com.withparadox2.simpledict;
+package com.withparadox2.simpledict.util;
 
 import android.widget.Toast;
+import com.withparadox2.simpledict.DictApp;
 
 /**
  * Created by withparadox2 on 2017/8/27.
