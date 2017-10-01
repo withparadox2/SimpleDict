@@ -1,6 +1,5 @@
 package com.withparadox2.simpledict.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,9 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.withparadox2.simpledict.dict.DictManager;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
+import com.withparadox2.simpledict.dict.DictManager;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.util.Util;
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.List;
  * Created by withparadox2 on 2017/8/12.
  */
 
-public class HomeActivity extends Activity {
+public class HomeActivity extends BaseActivity {
   private List<SearchItem> wordList;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,5 +93,9 @@ public class HomeActivity extends Activity {
       tv.setTag(getItem(i));
       return view;
     }
+  }
+
+  @Override public boolean showBackButton() {
+    return false;
   }
 }

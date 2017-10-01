@@ -1,6 +1,5 @@
 package com.withparadox2.simpledict.ui;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,12 +11,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.withparadox2.simpledict.dict.Dict;
 import com.withparadox2.simpledict.DictApp;
-import com.withparadox2.simpledict.dict.DictManager;
-import com.withparadox2.simpledict.util.FileUtil;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
+import com.withparadox2.simpledict.dict.Dict;
+import com.withparadox2.simpledict.dict.DictManager;
+import com.withparadox2.simpledict.util.FileUtil;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import java.util.List;
  * Created by withparadox2 on 2017/8/24.
  */
 
-public class SettingActivity extends Activity {
+public class SettingActivity extends BaseActivity {
   private ListView mListView;
   private DictAdapter mAdapter;
   private List<Dict> mDicts = new ArrayList<>();

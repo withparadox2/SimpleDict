@@ -1,34 +1,31 @@
 package com.withparadox2.simpledict.ui;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.TextView;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.dict.Word;
-import com.withparadox2.simpledict.util.Util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static android.os.Environment.*;
+import static android.os.Environment.getExternalStorageDirectory;
 
 /**
  * Created by withparadox2 on 2017/8/22.
  */
 
-public class WordContentActivity extends Activity {
+public class WordContentActivity extends BaseActivity {
   private WebView webView;
   public static final String KEY_SEARCH_ITEM = "search_item";
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_wod_content);
-    TextView tvWord = (TextView) findViewById(R.id.tv_word);
     webView = (WebView) findViewById(R.id.web_view);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       WebView.setWebContentsDebuggingEnabled(true);
@@ -37,7 +34,7 @@ public class WordContentActivity extends Activity {
     webView.getSettings().setJavaScriptEnabled(true);
 
     final SearchItem searchItem = (SearchItem) getIntent().getSerializableExtra(KEY_SEARCH_ITEM);
-    tvWord.setText(searchItem.text);
+    getSupportActionBar().setTitle(searchItem.text);
 
     new Thread(new Runnable() {
       @Override public void run() {
