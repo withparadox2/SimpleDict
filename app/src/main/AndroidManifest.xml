@@ -1,10 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
-    package="com.withparadox2.simpledict"
-    >
+    package="com.withparadox2.simpledict">
 
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
   <application
       android:name=".DictApp"
       android:allowBackup="true"
@@ -13,14 +12,20 @@
 
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-    <activity android:name=".ui.HomeActivity">
+    <activity
+        android:name=".ui.HomeActivity"
+        android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-    <activity android:name=".ui.WordContentActivity"/>
-    <activity android:name=".ui.SettingActivity"/>
+    <activity
+        android:name=".ui.WordContentActivity"
+        android:screenOrientation="portrait"/>
+    <activity
+        android:name=".ui.SettingActivity"
+        android:screenOrientation="portrait"/>
 
   </application>
 

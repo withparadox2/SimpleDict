@@ -17,6 +17,7 @@ import com.withparadox2.simpledict.dict.DictManager;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
+import com.withparadox2.simpledict.util.Util;
 import java.util.List;
 
 /**
@@ -84,7 +85,9 @@ public class HomeActivity extends Activity {
     @Override public View getView(int i, View view, ViewGroup viewGroup) {
       if (view == null) {
         view = new TextView(HomeActivity.this);
-        view.setPadding(20, 15, 20, 15);
+        int padding = Util.dp2px(HomeActivity.this, 13);
+        view.setPadding(padding, padding, padding, padding);
+        ((TextView) view).setTextSize(16);
       }
       TextView tv = (TextView) view;
       tv.setText(getItem(i).text);

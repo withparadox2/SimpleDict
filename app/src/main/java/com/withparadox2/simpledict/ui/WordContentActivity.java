@@ -1,70 +1,85 @@
 package com.withparadox2.simpledict.ui;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.PatternMatcher;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.webkit.WebView;
 import android.widget.TextView;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.dict.Word;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
+import com.withparadox2.simpledict.util.Util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static android.os.Environment.*;
 
 /**
  * Created by withparadox2 on 2017/8/22.
  */
 
 public class WordContentActivity extends Activity {
-  private TextView tvWord;
   private WebView webView;
   public static final String KEY_SEARCH_ITEM = "search_item";
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_wod_content);
-    tvWord = (TextView) findViewById(R.id.tv_word);
+    TextView tvWord = (TextView) findViewById(R.id.tv_word);
     webView = (WebView) findViewById(R.id.web_view);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      WebView.setWebContentsDebuggingEnabled(true);
+    }
     webView.getSettings().setAllowFileAccess(true);
     webView.getSettings().setJavaScriptEnabled(true);
 
-    SearchItem searchItem = (SearchItem) getIntent().getSerializableExtra(KEY_SEARCH_ITEM);
+    final SearchItem searchItem = (SearchItem) getIntent().getSerializableExtra(KEY_SEARCH_ITEM);
     tvWord.setText(searchItem.text);
 
-    StringBuilder sb = new StringBuilder();
-    for (Word word : searchItem.wordList) {
-      //sb.append(NativeLib.getDictName(word.ref)).append("\n\n");
-      sb.append(formatContent(NativeLib.getContent(word.ref),NativeLib.getDictName(word.ref)));
-    }
-    String base = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
-    String imagePath = "file://"+ base + "/test.gif";
+    new Thread(new Runnable() {
+      @Override public void run() {
+        final StringBuilder sb = new StringBuilder();
+        for (Word word : searchItem.wordList) {
+          String dictName = NativeLib.getDictName(word.ref);
+          sb.append("<div style=\"background:#f2f2f2;padding: 10px;\">")
+              .append(dictName)
+              .append("</div>");
+          sb.append("<div style=\"padding: 8px\">")
+              .append(formatContent(NativeLib.getContent(word.ref), dictName))
+              .append("</div>");
+        }
 
-    webView.loadDataWithBaseURL("", "<!DOCTYPE html>\n"
-        + "<html>"
-        + "<head>"
-        + "    <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"
-        + "</head>"
-        + "<body>"
-        + sb.toString()
-        + "</body>"
-        + "</html>", "text/html", "UTF-8", null);
+        WordContentActivity.this.runOnUiThread(new Runnable() {
+          @Override public void run() {
+            webView.loadDataWithBaseURL("", "<!DOCTYPE html>\n"
+                + "<html>"
+                + "<head>"
+                + "    <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"
+                + "</head>"
+                + "<body style=\"margin: 0;\">"
+                + sb.toString()
+                + "</body>"
+                + "</html>", "text/html", "UTF-8", null);
+          }
+        });
+      }
+    }).start();
   }
 
   private String formatContent(String text, String dictName) {
-    String base = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
+    String base = getExternalStorageDirectory().getAbsolutePath();
 
     Pattern image = Pattern.compile("<Ë M=\"dict://res/(.*?)\" />");
     Matcher matcher = image.matcher(text);
 
-    text = matcher.replaceAll("<img src=\"file://" + base + "/simpledict/aaa/$1\" style=\"max-width: 100%\"></img>")
-        .replaceAll("<n />", "<br>");
+    text = matcher.replaceAll("<img src=\"file://"
+        + base
+        + "/simpledict/"
+        + dictName
+        + "/$1\" style=\"max-width: 100%\"></img>").replaceAll("<n />", "<br>");
 
     Pattern strong = Pattern.compile("<g>(.*?)</g>");
     matcher = strong.matcher(text);
@@ -79,5 +94,8 @@ public class WordContentActivity extends Activity {
     text = matcher.replaceAll("<$1div>");
 
     return text;
+  }
+
+  @Override public void onEnterAnimationComplete() {
   }
 }
