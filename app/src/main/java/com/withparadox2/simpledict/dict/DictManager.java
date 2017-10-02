@@ -56,7 +56,7 @@ public class DictManager {
           if (activeSet.contains(dict.getName())) {
             dict.setIsActive(true);
             dict.setRef(NativeLib.prepare(file.getAbsolutePath()));
-            NativeLib.activeDict(dict.getRef());
+            NativeLib.activateDict(dict.getRef());
           }
           sDictList.add(dict);
         }
@@ -66,11 +66,18 @@ public class DictManager {
     }).start();
   }
 
-  public static void activeDict(Dict dict) {
+  public static void activateDict(Dict dict) {
     dict.setIsActive(true);
     if (!dict.isReady()) {
       dict.setRef(NativeLib.prepare(dict.getFile().getAbsolutePath()));
-      NativeLib.activeDict(dict.getRef());
+    }
+    NativeLib.activateDict(dict.getRef());
+  }
+
+  public static void deactivateDict(Dict dict) {
+    dict.setIsActive(false);
+    if (dict.isReady()) {
+      NativeLib.deactivateDict(dict.getRef());
     }
   }
 

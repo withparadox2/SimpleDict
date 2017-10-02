@@ -64,7 +64,7 @@ jobject jni_search(JNIEnv* env, jclass clazz, jstring text) {
     return list_obj;
 }
 
-jboolean jni_active_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
+jboolean jni_activate_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
     Dict* dict = (Dict*) dictHandle;
     if (dict) {
         dict->setSelected(true);
@@ -73,7 +73,7 @@ jboolean jni_active_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
     return JNI_FALSE;
 }
 
-jboolean jni_deactive_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
+jboolean jni_deactivate_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
     Dict* dict = (Dict*) dictHandle;
     if (dict) {
         dict->setSelected(false);
@@ -109,14 +109,14 @@ static JNINativeMethod gMethods[] = {
         (void*)jni_get_dict_name
     },
     {
-        "activeDict",
+        "activateDict",
         "(J)Z",
-        (void*)jni_active_dict
+        (void*)jni_activate_dict
     },
     {
-        "deactiveDict",
+        "deactivateDict",
         "(J)Z",
-        (void*)jni_deactive_dict
+        (void*)jni_deactivate_dict
     }
 };
 

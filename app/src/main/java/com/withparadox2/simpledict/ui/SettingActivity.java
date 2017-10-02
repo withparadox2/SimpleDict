@@ -64,18 +64,19 @@ public class SettingActivity extends BaseActivity {
       viewHolder.tvName.setText(dict.getName());
       viewHolder.checkBox.setChecked(dict.isActive());
       viewHolder.checkBox.setTag(dict);
-      viewHolder.checkBox.setOnCheckedChangeListener(mCheckedChangeListenere);
+      viewHolder.checkBox.setOnCheckedChangeListener(mCheckedChangeListener);
       return view;
     }
   }
 
-  private CompoundButton.OnCheckedChangeListener mCheckedChangeListenere =
+  private CompoundButton.OnCheckedChangeListener mCheckedChangeListener =
       new CompoundButton.OnCheckedChangeListener() {
         @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
           Dict dict = (Dict) buttonView.getTag();
-          dict.setIsActive(isChecked);
           if (isChecked) {
-            DictManager.activeDict(dict);
+            DictManager.activateDict(dict);
+          } else {
+            DictManager.deactivateDict(dict);
           }
           DictManager.saveActiveDicts(mDicts);
         }

@@ -23,9 +23,9 @@ public class NativeLib {
 
   public static native String getDictName(long wordHandle);
 
-  public static native boolean activeDict(long dictHandle);
+  public static native boolean activateDict(long dictHandle);
 
-  public static native boolean deactiveDict(long dictHandle);
+  public static native boolean deactivateDict(long dictHandle);
 
   public static void createFolder(String path) {
     File folder = new File(path);
