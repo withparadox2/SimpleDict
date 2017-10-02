@@ -33,8 +33,8 @@ public class BaseActivity extends AppCompatActivity {
   }
 
   public void setTitle(String title) {
-    if (getActionBar() != null) {
-      getActionBar().setTitle(title);
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setTitle(title);
     }
   }
 }
