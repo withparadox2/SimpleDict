@@ -12,7 +12,7 @@ public class Dict {
     private String name;
     private File file;
     private boolean isInstalled;
-    private boolean isSelected;
+    private boolean isActive;
 
     public Dict(String name, File file) {
         this.name = name;
@@ -20,7 +20,13 @@ public class Dict {
     }
 
     public Dict(File file) {
-        this.name = file.getName();
+        String fileName = file.getName();
+        int suffixIndex;
+        if ((suffixIndex = fileName.lastIndexOf('.')) != -1) {
+            this.name = fileName.substring(0, suffixIndex);
+        } else {
+            this.name = fileName;
+        }
         this.file = file;
     }
 
@@ -35,8 +41,8 @@ public class Dict {
         this.isInstalled = isInstalled;
     }
 
-    public void setIsSelected(boolean isSelected) {
-        this.isSelected = isSelected;
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     public String getName() {
@@ -47,8 +53,8 @@ public class Dict {
         return file;
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    public boolean isActive() {
+        return isActive;
     }
 
     public boolean isInstalled() {
@@ -75,7 +81,7 @@ public class Dict {
         Dict d = new Dict(name, file);
         d.ref = this.ref;
         d.isInstalled = this.isInstalled;
-        d.isSelected = this.isSelected;
+        d.isActive = this.isActive;
         return d;
     }
 }

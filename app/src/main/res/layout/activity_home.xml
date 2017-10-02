@@ -13,16 +13,7 @@
             android:paddingRight="10dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/tv_setting"
-            android:text="@string/setting"
-            android:layout_width="40dp"
-            android:gravity="center_horizontal"
-            android:layout_height="wrap_content">
-        </TextView>
     </LinearLayout>
-
 
     <ListView
         android:id="@+id/list_view"

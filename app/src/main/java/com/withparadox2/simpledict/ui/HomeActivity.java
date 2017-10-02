@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,14 +34,8 @@ public class HomeActivity extends BaseActivity {
     DictManager.installAndPrepareAll();
 
     ListView lv = (ListView) findViewById(R.id.list_view);
-    final BaseAdapter adapter = new MyAdapter();
+    final BaseAdapter adapter = new WordListAdapter();
     lv.setAdapter(adapter);
-
-    findViewById(R.id.tv_setting).setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        startActivity(new Intent(HomeActivity.this, SettingActivity.class));
-      }
-    });
 
     EditText editText = (EditText) findViewById(R.id.et_search);
     editText.addTextChangedListener(new TextWatcher() {
@@ -53,7 +49,13 @@ public class HomeActivity extends BaseActivity {
       }
 
       @Override public void afterTextChanged(Editable editable) {
-
+        //Fast to clear edit_text with typing two spaces
+        int len = editable.length();
+        if (len > 1) {
+          if (editable.charAt(len - 1) == ' ' && editable.charAt(len - 2) == ' ') {
+            editable.clear();
+          }
+        }
       }
     });
 
@@ -67,7 +69,7 @@ public class HomeActivity extends BaseActivity {
     });
   }
 
-  class MyAdapter extends BaseAdapter {
+  private class WordListAdapter extends BaseAdapter {
 
     @Override public int getCount() {
       return wordList == null ? 0 : wordList.size();
@@ -97,5 +99,19 @@ public class HomeActivity extends BaseActivity {
 
   @Override public boolean showBackButton() {
     return false;
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.home, menu);
+    return true;
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_setting:
+        startActivity(new Intent(this, SettingActivity.class));
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

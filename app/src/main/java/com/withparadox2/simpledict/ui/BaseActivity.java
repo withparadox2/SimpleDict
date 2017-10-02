@@ -31,4 +31,10 @@ public class BaseActivity extends AppCompatActivity {
   public boolean showBackButton() {
     return true;
   }
+
+  public void setTitle(String title) {
+    if (getActionBar() != null) {
+      getActionBar().setTitle(title);
+    }
+  }
 }

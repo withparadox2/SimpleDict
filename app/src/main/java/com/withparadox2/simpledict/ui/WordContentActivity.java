@@ -3,9 +3,7 @@ package com.withparadox2.simpledict.ui;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.MenuItem;
 import android.webkit.WebView;
-import android.widget.TextView;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
@@ -34,7 +32,7 @@ public class WordContentActivity extends BaseActivity {
     webView.getSettings().setJavaScriptEnabled(true);
 
     final SearchItem searchItem = (SearchItem) getIntent().getSerializableExtra(KEY_SEARCH_ITEM);
-    getSupportActionBar().setTitle(searchItem.text);
+    setTitle(searchItem.text);
 
     new Thread(new Runnable() {
       @Override public void run() {
@@ -91,8 +89,5 @@ public class WordContentActivity extends BaseActivity {
     text = matcher.replaceAll("<$1div>");
 
     return text;
-  }
-
-  @Override public void onEnterAnimationComplete() {
   }
 }
