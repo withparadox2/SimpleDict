@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.Dict;
 import com.withparadox2.simpledict.dict.DictManager;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,8 @@ import java.util.List;
 
 public class SettingActivity extends BaseActivity {
   private DictAdapter mAdapter;
-  private List<Dict> mDicts = DictManager.sDictList;
+  private List<DictWrapper> mDictList = convert(DictManager.sDictList);
+  private int mSrcPosition = -1;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -33,19 +35,47 @@ public class SettingActivity extends BaseActivity {
 
     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (mSrcPosition == -1) {
+          mSrcPosition = position;
+          mAdapter.getItem(position).isUnderSort = true;
+        } else {
+          if (mSrcPosition != position) {
+            orderItem(mSrcPosition, position);
+            mAdapter.notifyDataSetChanged();
+
+          }
+          mSrcPosition = -1;
+        }
+        mAdapter.notifyDataSetChanged();
       }
     });
   }
 
+  private void orderItem(int src, int dest) {
+    DictWrapper dict = mDictList.remove(src);
+    dict.isUnderSort = false;
+    mDictList.add(dest, dict);
+
+    DictManager.sDictList.add(dest, DictManager.sDictList.remove(src));
+    DictManager.saveOrders(DictManager.sDictList);
+  }
+
+  private static List<DictWrapper> convert(List<Dict> list) {
+    List<DictWrapper> wrappers = new ArrayList<>();
+    for (Dict dict : list) {
+      wrappers.add(new DictWrapper(dict));
+    }
+    return wrappers;
+  }
 
   private class DictAdapter extends BaseAdapter {
 
     @Override public int getCount() {
-      return mDicts.size();
+      return mDictList.size();
     }
 
-    @Override public Dict getItem(int position) {
-      return mDicts.get(position);
+    @Override public DictWrapper getItem(int position) {
+      return mDictList.get(position);
     }
 
     @Override public long getItemId(int position) {
@@ -60,11 +90,13 @@ public class SettingActivity extends BaseActivity {
       }
 
       ViewHolder viewHolder = (ViewHolder) view.getTag();
-      final Dict dict = getItem(position);
+      DictWrapper wrapper = getItem(position);
+      Dict dict = wrapper.dict;
       viewHolder.tvName.setText(dict.getName());
       viewHolder.checkBox.setChecked(dict.isActive());
       viewHolder.checkBox.setTag(dict);
       viewHolder.checkBox.setOnCheckedChangeListener(mCheckedChangeListener);
+      viewHolder.blink(wrapper.isUnderSort);
       return view;
     }
   }
@@ -78,18 +110,32 @@ public class SettingActivity extends BaseActivity {
           } else {
             DictManager.deactivateDict(dict);
           }
-          DictManager.saveActiveDicts(mDicts);
+          DictManager.saveActiveDicts(DictManager.sDictList);
         }
       };
 
   private static class ViewHolder {
     TextView tvName;
     CheckBox checkBox;
+    View blinkLayout;
 
     ViewHolder(View view) {
       tvName = (TextView) view.findViewById(R.id.tv_dict_name);
       checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+      blinkLayout = view.findViewById(R.id.layout_blink);
+    }
+
+    void blink(boolean isBlink) {
+      blinkLayout.setVisibility(isBlink ? View.VISIBLE : View.GONE);
     }
   }
 
+  private static class DictWrapper {
+    boolean isUnderSort;
+    Dict dict;
+
+    DictWrapper(Dict dict) {
+      this.dict = dict;
+    }
+  }
 }

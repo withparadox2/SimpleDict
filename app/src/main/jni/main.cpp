@@ -401,11 +401,10 @@ Dict* prepare(const char* filePath) {
 //I make a mistake, with rvo unique_ptr is also acceptable.
 vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
     vector<vector<Word*>> allWords;
-    for (auto& pair : pathToDict) {
-        Dict* dict = pair.second;
-        if (dict && dict->isSelected) {
-            allWords.push_back(dict->search(searchText));
-        }
+    vector<Dict*> dictList;
+    getSortedDictList(dictList);
+    for (Dict* dict : dictList) {
+        allWords.push_back(dict->search(searchText));
     }
     
     vector<shared_ptr<SearchItem>> searchList;
@@ -450,5 +449,13 @@ string getResFolder(string filePath) {
     return folder;
 }
 
-
-
+void getSortedDictList(vector<Dict*>& dictList) {
+    for (auto& pair : pathToDict) {
+        Dict* dict = pair.second;
+        if (dict && dict->isSelected) {
+            dictList.push_back(dict);
+        }
+    }
+    SortDict sortObj;
+    sort(dictList.begin(), dictList.end(), sortObj);
+}

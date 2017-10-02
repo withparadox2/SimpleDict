@@ -62,8 +62,8 @@ public class HomeActivity extends BaseActivity {
     lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         SearchItem searchItem = (SearchItem) view.getTag();
-        Intent intent = new Intent(HomeActivity.this, WordContentActivity.class);
-        intent.putExtra(WordContentActivity.KEY_SEARCH_ITEM, searchItem);
+        Intent intent = new Intent(HomeActivity.this, WordDetailActivity.class);
+        intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEM, searchItem);
         startActivity(intent);
       }
     });

@@ -82,6 +82,14 @@ jboolean jni_deactivate_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
     return JNI_FALSE;
 }
 
+void jni_set_dict_order(JNIEnv* env, jclass clazz, jlong dictHandle, jint order) {
+    Dict* dict = (Dict*) dictHandle;
+    if (dict) {
+        dict->setOrder(order);
+    }
+}
+
+
 static JNINativeMethod gMethods[] = {
     {
         "install",
@@ -117,6 +125,11 @@ static JNINativeMethod gMethods[] = {
         "deactivateDict",
         "(J)Z",
         (void*)jni_deactivate_dict
+    },
+    {
+        "setDictOrder",
+        "(JI)V",
+        (void*)jni_set_dict_order
     }
 };
 

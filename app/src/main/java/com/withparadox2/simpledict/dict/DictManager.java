@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,8 @@ public class DictManager {
   }
 
   public static void installAndPrepareAll() {
+
+    //TODO Use multi-thread to speed up installation
     new Thread(new Runnable() {
       @Override public void run() {
         sDictList.clear();
@@ -49,16 +52,16 @@ public class DictManager {
 
         for (File file : files) {
           Dict dict = new Dict(file);
+          dict.setOrder(getOrder(dict));
           if (!isInstalled(file)) {
             NativeLib.install(file.getAbsolutePath());
           }
           dict.setIsInstalled(true);
           if (activeSet.contains(dict.getName())) {
-            dict.setIsActive(true);
-            dict.setRef(NativeLib.prepare(file.getAbsolutePath()));
-            NativeLib.activateDict(dict.getRef());
+            activateDict(dict);
           }
           sDictList.add(dict);
+          Collections.sort(sDictList);
         }
 
         Util.toast("Install success.");
@@ -72,6 +75,7 @@ public class DictManager {
       dict.setRef(NativeLib.prepare(dict.getFile().getAbsolutePath()));
     }
     NativeLib.activateDict(dict.getRef());
+    NativeLib.setDictOrder(dict.getRef(), dict.getOrder());
   }
 
   public static void deactivateDict(Dict dict) {
@@ -87,7 +91,7 @@ public class DictManager {
       String[] dicts = dictStr.split("###");
       return new HashSet<>(Arrays.asList(dicts));
     }
-    return new HashSet<String>(0);
+    return new HashSet<>(0);
   }
 
   public static void saveActiveDicts(List<Dict> dicts) {
@@ -101,5 +105,17 @@ public class DictManager {
       }
     }
     PreferencesUtil.putString(KEY_ACTIVE_DICTS, sb.toString());
+  }
+
+  public static int getOrder(Dict dict) {
+    return PreferencesUtil.getInt(dict.getName() + "-order", -1);
+  }
+
+  public static void saveOrders(List<Dict> list) {
+    for (int i = 0; i < list.size(); i++) {
+      Dict dict = list.get(i);
+      dict.setOrder(i);
+      PreferencesUtil.putInt(dict.getName() + "-order", i);
+    }
   }
 }

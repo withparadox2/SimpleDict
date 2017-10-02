@@ -70,6 +70,10 @@ void Dict::setSelected(bool isSelected) {
     this->isSelected = isSelected;
 }
 
+void Dict::setOrder(int order) {
+    this->order = order;
+}
+
 string Word::getContent() {
     if (content.size() == 0) {
         readContent();

@@ -17,7 +17,7 @@ import static android.os.Environment.getExternalStorageDirectory;
  * Created by withparadox2 on 2017/8/22.
  */
 
-public class WordContentActivity extends BaseActivity {
+public class WordDetailActivity extends BaseActivity {
   private WebView webView;
   public static final String KEY_SEARCH_ITEM = "search_item";
 
@@ -47,7 +47,7 @@ public class WordContentActivity extends BaseActivity {
               .append("</div>");
         }
 
-        WordContentActivity.this.runOnUiThread(new Runnable() {
+        WordDetailActivity.this.runOnUiThread(new Runnable() {
           @Override public void run() {
             webView.loadDataWithBaseURL("", "<!DOCTYPE html>\n"
                 + "<html>"

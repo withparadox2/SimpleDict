@@ -10,12 +10,13 @@ class Word;
 class Dict {
 public:
     bool isSelected;
-    Dict(string& inflatedPath);
+    int order;
     vector<Word*> wordList;
 
     ifstream ifsInflated;
     string inflatedPath;
     string name;
+    Dict(string& inflatedPath);
     ~Dict();
     void printWords();
 
@@ -23,6 +24,7 @@ public:
     vector<Word*> search(const string& text);
     static void printWordList(vector<Word*>& list);
     void setSelected(bool isSelected);
+    void setOrder(int order);
 };
 
 class Word {
@@ -53,5 +55,12 @@ struct SortWord {
     bool operator () (T& lh, T& rh) {
         return sortWord(lh->text, rh->text);
     }
+};
+
+
+struct SortDict {
+    bool operator () (Dict* lh, Dict* rh) {
+       return lh->order < rh->order;
+    } 
 };
 #endif

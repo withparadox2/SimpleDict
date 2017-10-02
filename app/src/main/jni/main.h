@@ -28,6 +28,7 @@ void sortWords(vector<Word*>& wordList);
 vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText);
 void installDict(const char* path, bool isSelected = true);
 string getResFolder(string filePath);
+void getSortedDictList(vector<Dict*>& dictList);
 
 //Rely on java to create folder
 void createFolder(const char* path); 

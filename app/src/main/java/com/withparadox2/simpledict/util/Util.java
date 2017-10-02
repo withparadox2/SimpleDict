@@ -29,4 +29,14 @@ public class Util {
     float scale = context.getResources().getDisplayMetrics().density;
     return (int) ((pixel - 0.5f) / scale);
   }
+
+  public static String stripSuffix(String input) {
+    int suffixIndex;
+    if ((suffixIndex = input.lastIndexOf('.')) != -1) {
+      return input.substring(0, suffixIndex);
+    } else {
+      return input;
+    }
+
+  }
 }

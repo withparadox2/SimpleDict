@@ -21,7 +21,7 @@
       </intent-filter>
     </activity>
     <activity
-        android:name=".ui.WordContentActivity"
+        android:name=".ui.WordDetailActivity"
         android:screenOrientation="portrait"/>
     <activity
         android:name=".ui.SettingActivity"
