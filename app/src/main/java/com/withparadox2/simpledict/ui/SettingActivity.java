@@ -39,10 +39,9 @@ public class SettingActivity extends BaseActivity {
           mSrcPosition = position;
           mAdapter.getItem(position).isUnderSort = true;
         } else {
+          mDictList.get(mSrcPosition).isUnderSort = false;
           if (mSrcPosition != position) {
             orderItem(mSrcPosition, position);
-            mAdapter.notifyDataSetChanged();
-
           }
           mSrcPosition = -1;
         }
@@ -53,7 +52,6 @@ public class SettingActivity extends BaseActivity {
 
   private void orderItem(int src, int dest) {
     DictWrapper dict = mDictList.remove(src);
-    dict.isUnderSort = false;
     mDictList.add(dest, dict);
 
     DictManager.sDictList.add(dest, DictManager.sDictList.remove(src));
@@ -93,6 +91,7 @@ public class SettingActivity extends BaseActivity {
       DictWrapper wrapper = getItem(position);
       Dict dict = wrapper.dict;
       viewHolder.tvName.setText(dict.getName());
+      viewHolder.checkBox.setOnCheckedChangeListener(null);
       viewHolder.checkBox.setChecked(dict.isActive());
       viewHolder.checkBox.setTag(dict);
       viewHolder.checkBox.setOnCheckedChangeListener(mCheckedChangeListener);
