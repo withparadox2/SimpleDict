@@ -13,13 +13,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by withparadox2 on 2017/8/24.
  */
 
 public class DictManager {
-  public static List<Dict> sDictList = new ArrayList<>();
+  public static final List<Dict> sDictList = new ArrayList<>();
+  private static ExecutorService sExecutor;
   private static final String KEY_ACTIVE_DICTS = "active_dicts";
 
   public static boolean isInstalled(File ld2File) {
@@ -28,29 +33,32 @@ public class DictManager {
 
   public static void installAndPrepareAll() {
 
-    //TODO Use multi-thread to speed up installation
-    new Thread(new Runnable() {
-      @Override public void run() {
-        sDictList.clear();
-        File dir = FileUtil.fromPath(FileUtil.DICT_DIR);
-        if (!dir.exists()) {
-          return;
-        }
+    sDictList.clear();
+    File dir = FileUtil.fromPath(FileUtil.DICT_DIR);
+    if (!dir.exists()) {
+      return;
+    }
 
-        final File[] files = dir.listFiles(new FilenameFilter() {
-          @Override public boolean accept(File dir, String name) {
-            return name.lastIndexOf("ld2") == name.length() - 3;
-          }
-        });
+    final File[] files = dir.listFiles(new FilenameFilter() {
+      @Override public boolean accept(File dir, String name) {
+        return name.lastIndexOf("ld2") == name.length() - 3;
+      }
+    });
 
-        if (files == null) {
-          Util.toast("Check dicts or permission.");
-          return;
-        }
+    if (files == null || files.length == 0) {
+      Util.toast("Check dicts or permission.");
+      return;
+    }
 
-        Set<String> activeSet = getActiveDictSet();
+    initExecutor(files.length);
 
-        for (File file : files) {
+    final Set<String> activeSet = getActiveDictSet();
+
+    for (File filePara : files) {
+      final File file = filePara;
+
+      sExecutor.execute(new Runnable() {
+        @Override public void run() {
           Dict dict = new Dict(file);
           dict.setOrder(getOrder(dict));
           if (!isInstalled(file)) {
@@ -60,13 +68,26 @@ public class DictManager {
           if (activeSet.contains(dict.getName())) {
             activateDict(dict);
           }
-          sDictList.add(dict);
-          Collections.sort(sDictList);
-        }
 
-        Util.toast("Install success.");
-      }
-    }).start();
+          synchronized (sDictList) {
+            sDictList.add(dict);
+            if (sDictList.size() == files.length) {
+              Collections.sort(sDictList);
+              Util.toast("Install success.");
+              sExecutor.shutdown();
+            }
+          }
+        }
+      });
+    }
+  }
+
+  private static void initExecutor(int fileCount) {
+    int threadCount = Math.min(fileCount, 4);
+    if (sExecutor == null) {
+      sExecutor = new ThreadPoolExecutor(threadCount, threadCount, 30, TimeUnit.MILLISECONDS,
+          new LinkedBlockingDeque<Runnable>());
+    }
   }
 
   public static void activateDict(Dict dict) {
