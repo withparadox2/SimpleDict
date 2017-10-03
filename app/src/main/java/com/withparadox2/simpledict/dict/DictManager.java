@@ -1,6 +1,7 @@
 package com.withparadox2.simpledict.dict;
 
 import android.text.TextUtils;
+import com.withparadox2.simpledict.DictApp;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.util.FileUtil;
 import com.withparadox2.simpledict.util.PreferencesUtil;
@@ -31,7 +32,7 @@ public class DictManager {
     return new File(ld2File.getParent(), ld2File.getName() + ".inflated").exists();
   }
 
-  public static void installAndPrepareAll() {
+  public static void installAndPrepareAll(final Runnable finalAction) {
 
     sDictList.clear();
     File dir = FileUtil.fromPath(FileUtil.DICT_DIR);
@@ -75,6 +76,10 @@ public class DictManager {
               Collections.sort(sDictList);
               Util.toast("Install success.");
               sExecutor.shutdown();
+              sExecutor = null;
+              if (finalAction != null) {
+                DictApp.getInstance().run(finalAction);
+              }
             }
           }
         }

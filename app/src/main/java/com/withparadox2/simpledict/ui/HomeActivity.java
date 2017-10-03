@@ -32,7 +32,11 @@ public class HomeActivity extends BaseActivity {
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
-    DictManager.installAndPrepareAll();
+    DictManager.installAndPrepareAll(new Runnable() {
+      @Override public void run() {
+        startService(new Intent(HomeActivity.this, SpyService.class));
+      }
+    });
 
     ListView lv = (ListView) findViewById(R.id.list_view);
     final BaseAdapter adapter = new WordListAdapter();
@@ -63,9 +67,7 @@ public class HomeActivity extends BaseActivity {
     lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         SearchItem searchItem = (SearchItem) view.getTag();
-        Intent intent = new Intent(HomeActivity.this, WordDetailActivity.class);
-        intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEM, searchItem);
-        startActivity(intent);
+        startActivity(WordDetailActivity.getIntent(HomeActivity.this, searchItem));
       }
     });
   }

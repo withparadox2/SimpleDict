@@ -22,11 +22,13 @@
     </activity>
     <activity
         android:name=".ui.WordDetailActivity"
+        android:launchMode="singleInstance"
         android:screenOrientation="portrait"/>
     <activity
         android:name=".ui.SettingActivity"
         android:label="@string/setting_title"
         android:screenOrientation="portrait"/>
+    <service android:name=".ui.SpyService"/>
 
   </application>
 

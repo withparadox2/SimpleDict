@@ -1,5 +1,7 @@
 package com.withparadox2.simpledict.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -89,5 +91,11 @@ public class WordDetailActivity extends BaseActivity {
     text = matcher.replaceAll("<$1div>");
 
     return text;
+  }
+
+  public static Intent getIntent(Context context, SearchItem item) {
+    Intent intent = new Intent(context, WordDetailActivity.class);
+    intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEM, item);
+    return intent;
   }
 }
