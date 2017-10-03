@@ -27,14 +27,6 @@ public class DictApp extends Application {
     return sInstance;
   }
 
-  public Dict getActiveDict() {
-    return this.activeDict;
-  }
-
-  public void setActiveDict(Dict dict) {
-    this.activeDict = dict;
-  }
-
   public void run(Runnable action) {
     mHandler.post(action);
   }

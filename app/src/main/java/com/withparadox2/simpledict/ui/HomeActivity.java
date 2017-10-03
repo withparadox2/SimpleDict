@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -113,5 +114,13 @@ public class HomeActivity extends BaseActivity {
         return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      moveTaskToBack(true);
+      return true;
+    }
+    return super.onKeyDown(keyCode, event);
   }
 }

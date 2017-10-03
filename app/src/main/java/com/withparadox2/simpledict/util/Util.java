@@ -37,6 +37,5 @@ public class Util {
     } else {
       return input;
     }
-
   }
 }
