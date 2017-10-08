@@ -20,7 +20,7 @@ import static android.os.Environment.getExternalStorageDirectory;
  */
 
 public class WordDetailActivity extends BaseActivity {
-  private WebView webView;
+  protected WebView webView;
   public static final String KEY_SEARCH_ITEM = "search_item";
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {

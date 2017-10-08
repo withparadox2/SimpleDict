@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
@@ -35,8 +34,9 @@ public class SpyService extends Service {
               wordList = NativeLib.search(text);
             }
             if (wordList.size() > 0) {
-              Intent intent = WordDetailActivity.getIntent(SpyService.this, wordList.get(0));
+              Intent intent = PeekActivity.getIntent(SpyService.this, wordList.get(0));
               intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
               startActivity(intent);
             }
           }
