@@ -1,7 +1,6 @@
 package com.withparadox2.simpledict.util;
 
 import android.content.Context;
-import android.util.TypedValue;
 import android.widget.Toast;
 import com.withparadox2.simpledict.DictApp;
 
@@ -11,14 +10,20 @@ import com.withparadox2.simpledict.DictApp;
 
 public class Util {
   public static void toast(final String text) {
-    Runnable action = new Runnable() {
+    post(new Runnable() {
       @Override public void run() {
         Toast.makeText(DictApp.getInstance(), text, Toast.LENGTH_SHORT).show();
       }
-    };
-    DictApp.getInstance().run(action);
+    });
   }
 
+  public static void post(Runnable action) {
+    DictApp.getInstance().getHandler().post(action);
+  }
+
+  public static void postDelayed(Runnable action, long delayMillis) {
+    DictApp.getInstance().getHandler().postDelayed(action, delayMillis);
+  }
 
   public static int dp2px(Context context, int dip) {
     float scale = context.getResources().getDisplayMetrics().density;

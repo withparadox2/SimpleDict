@@ -30,4 +30,8 @@ public class DictApp extends Application {
   public void run(Runnable action) {
     mHandler.post(action);
   }
+
+  public Handler getHandler() {
+    return mHandler;
+  }
 }
