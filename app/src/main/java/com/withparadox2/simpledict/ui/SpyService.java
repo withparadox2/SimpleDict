@@ -1,6 +1,7 @@
 package com.withparadox2.simpledict.ui;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -82,8 +83,14 @@ public class SpyService extends Service {
         (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
 
     clipboard.addPrimaryClipChangedListener(mPrimaryChangeListener);
+
+    Intent resultIntent = new Intent(this, HomeActivity.class);
+    resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    PendingIntent resultPendingIntent =
+        PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     Notification notification = new NotificationCompat.Builder(this).setContentTitle("SimpleDict")
         .setSmallIcon(R.mipmap.ic_launcher)
+        .setContentIntent(resultPendingIntent)
         .build();
     startForeground(1, notification);
   }
