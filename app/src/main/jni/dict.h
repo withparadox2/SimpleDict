@@ -25,6 +25,10 @@ public:
     static void printWordList(vector<Word*>& list);
     void setSelected(bool isSelected);
     void setOrder(int order);
+
+private:
+    int binarySearch(int begin, int end, int index, char c, bool isTop);
+    char getWordChar(int wordIndex, int index);
 };
 
 class Word {

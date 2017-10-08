@@ -14,7 +14,6 @@ import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Created by withparadox2 on 2017/10/3.
@@ -31,7 +30,7 @@ public class SpyService extends Service {
             String text = clipdata.getItemAt(0).getText().toString();
             text = cleanWord(text);
             List<SearchItem> wordList = NativeLib.search(text);
-            if (wordList.size() == 0 || !TextUtils.equals(text, wordList.get(0).text)) {
+            if (wordList.size() == 0) {
               text = getRealWord(text);
               wordList = NativeLib.search(text);
             }

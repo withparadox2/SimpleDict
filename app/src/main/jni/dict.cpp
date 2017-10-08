@@ -28,37 +28,84 @@ void Dict::printWords() {
 bool Dict::isClose() {
     return ifsInflated.is_open();
 }
-vector<Word*> Dict::search(const string& text) {
-    vector<Word*> result; 
-    int i = 0;
-    auto iter = wordList.begin();
-    while (i < text.size()) {
-        bool append = i == text.size() - 1;
-        char c = text.at(i);
 
-        while (iter != wordList.end()) {
-            string& word = (*iter)->text;
-            char cw = word.size() <= i ? 0 : word.at(i);
-            if (cw < c) {
-                iter++;
-            } else if (cw == c) {
-                if (append) {
-                    result.push_back(*iter);
-                    iter++;
-                    if (result.size() > 10) {
-                        return result;
-                    }
-                    continue;
-                } 
-                break;
+int Dict::binarySearch(int begin, int end, int index, char c, bool isTop) {
+    
+    if (begin == end) {
+        if (getWordChar(begin, index) != c) {
+            return -1;
+        } else {
+            return begin;
+        }
+    } else if (end - begin == 1) {
+        char bc = getWordChar(begin, index);
+        char ec = getWordChar(end, index);
+        if (isTop) {
+            if (bc == c) {
+                return begin;
+            } else if (ec == c) {
+                return end;
             } else {
-                return result;
+                return -1;
+            }
+        } else {
+            if (ec == c) {
+                return end;
+            } else if (bc == c) {
+                return begin;
+            } else {
+                return -1;
             }
         }
-        i++;
     }
-    return result;
+
+    int mid = begin + (end - begin) / 2;
+    char midChar = getWordChar(mid, index);
+
+    if (midChar < c) {
+        return binarySearch(mid, end, index, c, isTop);
+    } else if(midChar > c) {
+        return binarySearch(begin, mid, index, c, isTop);
+    } else {
+        if (isTop) {
+            return binarySearch(begin, mid, index, c, isTop);
+        } else {
+            return binarySearch(mid, end, index, c, isTop);
+        }
+    }
 }
+
+char Dict::getWordChar(int wordIndex, int index) {
+    string& word = wordList.at(wordIndex)->text;
+    return word.size() <= index ? 0 : word.at(index);
+}
+
+vector<Word*> Dict::search(const string& text) {
+   vector<Word*> result; 
+   int i = 0;
+   int ib = 0;
+   int ie = wordList.size() - 1;
+   for (i = 0; i < text.size(); i++) {
+       char c = text.at(i);
+       ib = binarySearch(ib, ie, i, c, true);
+       if (ib == -1) {
+           return result;
+       }
+       ie = binarySearch(ib, ie, i, c, false);
+       if (ie == -1) {
+           return result;
+       }
+
+       if (i == text.size() - 1) {
+           for (int s = ib; s <= ie && s <= 10 + ib; s++) {
+             result.push_back(wordList.at(s));
+           }
+       }
+   }
+   return result;
+
+}
+
 void Dict::printWordList(vector<Word*>& wordList) {
     for(auto iter = wordList.begin(); iter != wordList.end(); iter++) {
         cout << (*iter)->text << endl;
