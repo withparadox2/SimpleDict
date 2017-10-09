@@ -25,6 +25,7 @@
         android:screenOrientation="portrait"/>
     <activity
         android:name=".ui.PeekActivity"
+        android:theme="@style/DialogTheme"
         android:excludeFromRecents="true"
         android:launchMode="singleInstance"
         android:screenOrientation="portrait"/>

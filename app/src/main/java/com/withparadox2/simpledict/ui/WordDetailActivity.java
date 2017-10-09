@@ -22,10 +22,11 @@ import static android.os.Environment.getExternalStorageDirectory;
 public class WordDetailActivity extends BaseActivity {
   protected WebView webView;
   public static final String KEY_SEARCH_ITEM = "search_item";
+  protected SearchItem mSearchItem;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_wod_content);
+    setContentView(getContentViewId());
     webView = (WebView) findViewById(R.id.web_view);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       WebView.setWebContentsDebuggingEnabled(true);
@@ -33,13 +34,13 @@ public class WordDetailActivity extends BaseActivity {
     webView.getSettings().setAllowFileAccess(true);
     webView.getSettings().setJavaScriptEnabled(true);
 
-    final SearchItem searchItem = (SearchItem) getIntent().getSerializableExtra(KEY_SEARCH_ITEM);
-    setTitle(searchItem.text);
+    mSearchItem = (SearchItem) getIntent().getSerializableExtra(KEY_SEARCH_ITEM);
+    setTitle(mSearchItem.text);
 
     new Thread(new Runnable() {
       @Override public void run() {
         final StringBuilder sb = new StringBuilder();
-        for (Word word : searchItem.wordList) {
+        for (Word word : mSearchItem.wordList) {
           String dictName = NativeLib.getDictName(word.ref);
           sb.append("<div style=\"background:#f2f2f2;padding: 10px;\">")
               .append(dictName)
@@ -64,6 +65,10 @@ public class WordDetailActivity extends BaseActivity {
         });
       }
     }).start();
+  }
+
+  protected int getContentViewId() {
+    return R.layout.activity_wod_content;
   }
 
   private String formatContent(String text, String dictName) {
