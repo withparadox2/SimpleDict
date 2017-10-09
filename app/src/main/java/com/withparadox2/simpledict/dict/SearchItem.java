@@ -14,4 +14,8 @@ public class SearchItem implements Serializable {
     this.text = text;
     this.wordList = wordList;
   }
+
+  @Override public String toString() {
+    return text;
+  }
 }

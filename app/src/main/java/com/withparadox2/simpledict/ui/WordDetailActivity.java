@@ -10,6 +10,9 @@ import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.dict.Word;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,8 +24,9 @@ import static android.os.Environment.getExternalStorageDirectory;
 
 public class WordDetailActivity extends BaseActivity {
   protected WebView webView;
-  public static final String KEY_SEARCH_ITEM = "search_item";
-  protected SearchItem mSearchItem;
+  public static final String KEY_SEARCH_ITEMS = "search_items";
+  protected SearchItem mCurItem;
+  protected List<SearchItem> mItemList = new ArrayList<>();
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -33,14 +37,30 @@ public class WordDetailActivity extends BaseActivity {
     }
     webView.getSettings().setAllowFileAccess(true);
     webView.getSettings().setJavaScriptEnabled(true);
+    updateIntent();
+    loadContentIntoWebView();
+  }
 
-    mSearchItem = (SearchItem) getIntent().getSerializableExtra(KEY_SEARCH_ITEM);
-    setTitle(mSearchItem.text);
+  @Override protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    setIntent(intent);
+    updateIntent();
+    loadContentIntoWebView();
+  }
 
+  @SuppressWarnings("unchecked") protected void updateIntent() {
+    List<SearchItem> tempList = (List<SearchItem>) getIntent().getSerializableExtra(KEY_SEARCH_ITEMS);
+    mItemList.clear();
+    mItemList.addAll(tempList);
+    mCurItem = mItemList.get(0);
+    setTitle(mCurItem.text);
+  }
+
+  protected void loadContentIntoWebView() {
     new Thread(new Runnable() {
       @Override public void run() {
         final StringBuilder sb = new StringBuilder();
-        for (Word word : mSearchItem.wordList) {
+        for (Word word : mCurItem.wordList) {
           String dictName = NativeLib.getDictName(word.ref);
           sb.append("<div style=\"background:#f2f2f2;padding: 10px;\">")
               .append(dictName)
@@ -100,7 +120,9 @@ public class WordDetailActivity extends BaseActivity {
 
   public static Intent getIntent(Context context, SearchItem item) {
     Intent intent = new Intent(context, WordDetailActivity.class);
-    intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEM, item);
+    List<SearchItem> items = new ArrayList<>();
+    items.add(item);
+    intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEMS, (Serializable) items);
     return intent;
   }
 }

@@ -35,7 +35,7 @@ public class SpyService extends Service {
               wordList = NativeLib.search(text);
             }
             if (wordList.size() > 0) {
-              Intent intent = PeekActivity.getIntent(SpyService.this, wordList.get(0));
+              Intent intent = PeekActivity.getIntent(SpyService.this, wordList);
               intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
               intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
               startActivity(intent);

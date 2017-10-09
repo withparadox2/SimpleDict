@@ -2,33 +2,59 @@ package com.withparadox2.simpledict.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.annotation.LayoutRes;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.util.Util;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by withparadox2 on 2017/10/8.
  */
 
 public class PeekActivity extends WordDetailActivity {
+  private Spinner spinner;
+  private ArrayAdapter<SearchItem> mAdapter;
 
-  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+  @Override public void setContentView(@LayoutRes int layoutResID) {
     configWindowSize();
-    super.onCreate(savedInstanceState);
+    super.setContentView(layoutResID);
     configDecorViewSize();
+    spinner = (Spinner) findViewById(R.id.spinner);
+    mAdapter = new ArrayAdapter<>(this, R.layout.item_peek_spinner, mItemList);
+    mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    spinner.setAdapter(mAdapter);
+    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+      @Override
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        mCurItem = mAdapter.getItem(position);
+        loadContentIntoWebView();
+      }
 
-    TextView wordTitle = (TextView) findViewById(R.id.tv_word_name);
-    wordTitle.setText(mSearchItem.text);
+      @Override public void onNothingSelected(AdapterView<?> parent) {
+
+      }
+    });
   }
 
   @Override protected int getContentViewId() {
     return R.layout.activity_peek;
+  }
+
+  @Override protected void updateIntent() {
+    super.updateIntent();
+    mAdapter.notifyDataSetChanged();
+  }
+
+  @Override protected void loadContentIntoWebView() {
+    super.loadContentIntoWebView();
   }
 
   private void configWindowSize() {
@@ -54,9 +80,9 @@ public class PeekActivity extends WordDetailActivity {
     return Util.getScreenHeight(this) / 3 * 2;
   }
 
-  public static Intent getIntent(Context context, SearchItem item) {
+  public static Intent getIntent(Context context, List<SearchItem> items) {
     Intent intent = new Intent(context, PeekActivity.class);
-    intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEM, item);
+    intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEMS, (Serializable) items);
     return intent;
   }
 }
