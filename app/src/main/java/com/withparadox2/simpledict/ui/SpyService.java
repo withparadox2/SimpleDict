@@ -85,7 +85,8 @@ public class SpyService extends Service {
     clipboard.addPrimaryClipChangedListener(mPrimaryChangeListener);
 
     Intent resultIntent = new Intent(this, HomeActivity.class);
-    resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+    resultIntent.setAction(Intent.ACTION_MAIN);
     PendingIntent resultPendingIntent =
         PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     Notification notification = new NotificationCompat.Builder(this).setContentTitle("SimpleDict")
