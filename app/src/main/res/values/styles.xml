@@ -5,7 +5,7 @@
     <!-- Customize your theme here. -->
   </style>
 
-  <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
+  <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
     <item name="windowNoTitle">true</item>
     <item name="android:windowBackground">@drawable/bg_peek_dialog</item>
   </style>

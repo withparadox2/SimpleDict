@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.TextView;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
@@ -22,6 +22,7 @@ public class PeekActivity extends WordDetailActivity {
     configWindowSize();
     super.onCreate(savedInstanceState);
     configDecorViewSize();
+
     TextView wordTitle = (TextView) findViewById(R.id.tv_word_name);
     wordTitle.setText(mSearchItem.text);
   }
@@ -31,19 +32,26 @@ public class PeekActivity extends WordDetailActivity {
   }
 
   private void configWindowSize() {
-    android.view.WindowManager.LayoutParams p = getWindow().getAttributes();
-    p.width = Util.getScreenWidth(this);
-    p.height = Util.getScreenHeight(this) / 3 * 2;
-    p.gravity = Gravity.TOP;
-    getWindow().setAttributes(p);
+    android.view.WindowManager.LayoutParams lp = getWindow().getAttributes();
+    lp.width = getDialogWidth();
+    lp.height = getDialogHeight();
+    lp.gravity = Gravity.TOP;
+    getWindow().setAttributes(lp);
   }
 
   private void configDecorViewSize() {
-    View decorView = getWindow().getDecorView();
     ViewGroup.LayoutParams lp = findViewById(android.R.id.content).getLayoutParams();
-    //padding is same as dimens defined in drawable/bg_peek_dialog.xml
-    lp.width = Util.getScreenWidth(this) - decorView.getPaddingLeft() - decorView.getPaddingRight();
-    lp.height = Util.getScreenHeight(this) / 3 * 2;
+    int padding = getResources().getDimensionPixelOffset(R.dimen.peek_dialog_padding);
+    lp.width = getDialogWidth() - 2 * padding;
+    lp.height = getDialogHeight();
+  }
+
+  private int getDialogWidth() {
+    return Util.getScreenWidth(this);
+  }
+
+  private int getDialogHeight() {
+    return Util.getScreenHeight(this) / 3 * 2;
   }
 
   public static Intent getIntent(Context context, SearchItem item) {
