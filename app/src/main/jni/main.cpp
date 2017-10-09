@@ -12,6 +12,7 @@ extern "C" {
 }
 #include <string.h>
 #include "main.h"
+#include "log.h"
 
 #define RE_CHAR_V(X) reinterpret_cast<char*>(&X[0])
 #define RE_UCHAR_V(X) reinterpret_cast<unsigned char*>(&X[0])
@@ -21,7 +22,7 @@ using namespace std;
 map<string, Dict*> pathToDict;
 
 int main() {
-    installDict("oxford+advanced+learner's+english-chinese+dictionary.ld2");
+    installDict("Oxford Advanced Learner's English-Chinese Dictionary.ld2");
     //installDict("newori.ld2");
     vector<shared_ptr<SearchItem>> list = searchSelectedDicts("mo");
     release();
@@ -100,7 +101,9 @@ void process(ifstream& input, string& inflatedFile, bool prepare = false) {
 }
 
 void extractRes(ifstream& ifs, string folder, int pos) {
+#ifdef ANDROID
     createFolder(folder.c_str());
+#endif
     u4 dwKeyPos = readu4(ifs);
     cout << "dwKeyPos = " << dwKeyPos << endl;
     cout << "cell count = " << (dwKeyPos / 8) << endl;

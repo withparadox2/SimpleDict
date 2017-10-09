@@ -2,7 +2,9 @@
 #define MAIN_H
 #include "dict.h"
 #include <memory>
-#include <jni.h>
+#ifdef ANDROID
+  #include <jni.h>
+#endif
 
 typedef uint8_t u1;
 typedef uint16_t u2;
