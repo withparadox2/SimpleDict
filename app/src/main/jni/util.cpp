@@ -1,4 +1,4 @@
-#include "main.h"
+#include "util.h"
 
 u1 readu1(ifstream& input, int offset) {
     return readNum<u1>(input, offset, 1);
@@ -33,5 +33,11 @@ u4 fromChars(char* ptr, int pos) {
         result |= ((u4)(u1)*(ptr + i)) << 8 * i;
     }
     return result;
+}
+
+char* getChars(int len) {
+    char* chars = new char[len + 1];
+    *(chars + len) = 0;
+    return chars;
 }
 

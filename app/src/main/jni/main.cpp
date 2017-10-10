@@ -36,12 +36,6 @@ void installDict(const char* path, bool isSelected) {
     }
 }
 
-char* getChars(int len) {
-    char* chars = new char[len + 1];
-    *(chars + len) = 0;
-    return chars;
-}
-
 void sortWords(vector<Word*>& wordList) {
     SortWord<Word*> sortObj;
     sort(wordList.begin(), wordList.end(), sortObj);
@@ -151,6 +145,8 @@ void extractRes(ifstream& ifs, string folder, int pos) {
         buffIn.resize(size);
         ifs.seekg(start, ifs.beg);
         ifs.read(RE_CHAR_V(buffIn), size);
+            
+
 
         if (resultData.size() - resultSize < dwSrcLen) {
             resultData.resize(resultSize + dwSrcLen);
