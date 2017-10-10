@@ -2,6 +2,7 @@
 #define LD2READER_H_
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -14,5 +15,6 @@ public:
     void process();
     void processRes(int offset);
     void processWords(int offset);
+    void readDef(int defOffset, int defLen, int partCount, int partOffset, vector<int> encryIndexs, int srcPartLen);
 };
 #endif
