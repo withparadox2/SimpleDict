@@ -24,6 +24,11 @@ u8 readu8(ifstream& input);
 
 u4 fromChars(char* ptr, int pos);
 
+void write(ofstream& output, int val, int count);
+void write1(ofstream& output, int val);
+void write2(ofstream& output, int val);
+void write4(ofstream& output, int val);
+
 char* getChars(int len);
 
 template<typename T> 

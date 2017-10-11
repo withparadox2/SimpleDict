@@ -26,6 +26,25 @@ u8 readu8(ifstream& input){
     return readNum<u8>(input, 8);
 }
 
+void write(ofstream& output, int val, int count) {
+    char c[count];
+    for (int i = count - 1; i >= 0; i--) {
+        c[i] = (char)(val >> i * 8);
+    }
+    output.write(c, count);
+}
+
+void write1(ofstream& output, int val) {
+    write(output, val, 1);
+}
+void write2(ofstream& output, int val) {
+    write(output, val, 2);
+}
+void write4(ofstream& output, int val) {
+    write(output, val, 4);
+}
+
+
 u4 fromChars(char* ptr, int pos) {
     u4 result = 0;
     ptr += pos;
