@@ -1,5 +1,8 @@
 #include "main.h"
 #include <jni.h>
+#include "log.h"
+#include <sstream>
+
 
 #define JNIREG_CLASS "com/withparadox2/simpledict/NativeLib"
 
@@ -89,6 +92,24 @@ void jni_set_dict_order(JNIEnv* env, jclass clazz, jlong dictHandle, jint order)
     }
 }
 
+void jni_load_res(JNIEnv* env, jclass clazz, jlong wordHandle, jstring resList) {
+    Word* word = (Word*)wordHandle;
+
+    const char* resList_str = env->GetStringUTFChars(resList, 0);
+    string resListStr(resList_str);
+
+    istringstream ss(resListStr);
+    string token;
+
+    vector<string> resVec;
+    while(std::getline(ss, token, ';')) {
+        resVec.push_back(token);
+    }
+
+    word->dict->loadRes(resVec);
+
+    env->ReleaseStringUTFChars(resList, resList_str);
+}
 
 static JNINativeMethod gMethods[] = {
     {
@@ -130,6 +151,11 @@ static JNINativeMethod gMethods[] = {
         "setDictOrder",
         "(JI)V",
         (void*)jni_set_dict_order
+    },
+    {
+        "loadRes",
+        "(JLjava/lang/String;)V",
+        (void*)jni_load_res
     }
 };
 

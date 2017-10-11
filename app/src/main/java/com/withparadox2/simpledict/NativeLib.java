@@ -29,6 +29,8 @@ public class NativeLib {
 
   public static native void setDictOrder(long dictHandle, int order);
 
+  public static native void loadRes(long wordHandle, String resList);
+
   public static void createFolder(String path) {
     File folder = new File(path);
     if (!folder.exists()) {

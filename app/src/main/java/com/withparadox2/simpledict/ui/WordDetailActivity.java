@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.webkit.WebView;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.dict.Word;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,8 @@ public class WordDetailActivity extends BaseActivity {
   }
 
   @SuppressWarnings("unchecked") protected void updateIntent() {
-    List<SearchItem> tempList = (List<SearchItem>) getIntent().getSerializableExtra(KEY_SEARCH_ITEMS);
+    List<SearchItem> tempList =
+        (List<SearchItem>) getIntent().getSerializableExtra(KEY_SEARCH_ITEMS);
     mItemList.clear();
     mItemList.addAll(tempList);
     mCurItem = mItemList.get(0);
@@ -65,8 +68,9 @@ public class WordDetailActivity extends BaseActivity {
           sb.append("<div style=\"background:#f2f2f2;padding: 10px;\">")
               .append(dictName)
               .append("</div>");
+
           sb.append("<div style=\"padding: 8px\">")
-              .append(formatContent(NativeLib.getContent(word.ref), dictName))
+              .append(formatContent(NativeLib.getContent(word.ref), dictName, word))
               .append("</div>");
         }
 
@@ -91,21 +95,40 @@ public class WordDetailActivity extends BaseActivity {
     return R.layout.activity_wod_content;
   }
 
-  private String formatContent(String text, String dictName) {
+  private String formatContent(String text, String dictName, Word word) {
     String base = getExternalStorageDirectory().getAbsolutePath();
 
-    Pattern image = Pattern.compile("<Ë M=\"dict://res/(.*?)\" />");
+    Pattern image = Pattern.compile("<Ë M=\"dict://res/(.*?)\".*?/>");
     Matcher matcher = image.matcher(text);
 
     text = matcher.replaceAll("<img src=\"file://"
         + base
         + "/simpledict/"
         + dictName
-        + "/$1\" style=\"max-width: 100%\"></img>").replaceAll("<n />", "<br>");
+        + "/$1\" style=\"max-width: 100%\"></img>");
+
+    matcher.reset();
+    String basePath = base + "/simpledict/" + dictName + "/";
+
+    StringBuilder sb = new StringBuilder();
+    while (matcher.find()) {
+      String picName = matcher.group(1);
+      if (!new File(basePath + picName).exists()) {
+        if (sb.length() != 0) {
+          sb.append(";");
+        }
+        sb.append(picName);
+      }
+    }
+    if (sb.length() > 0) {
+      new File(basePath).mkdirs();
+      NativeLib.loadRes(word.ref, sb.toString());
+    }
 
     Pattern strong = Pattern.compile("<g>(.*?)</g>");
     matcher = strong.matcher(text);
-    text = matcher.replaceAll("<b>$1</b>");
+    text = matcher.replaceAll("<b>$1</b>").replaceAll("<n />", "<br>");
+
 
     Pattern textStyle = Pattern.compile("<x K=\"(.*?)\">(.*?)</x>");
     matcher = textStyle.matcher(text);

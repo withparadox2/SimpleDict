@@ -224,14 +224,14 @@ void SdReader::readRes(int defOffset, int defLen, int partCount, vector<int> enc
     ofsn.close();
 }
 
-void SdReader::readSd() {
+Dict* SdReader::readSd() {
     ifstream ifsSd(sdPath, ifstream::binary);
     if (!ifsSd.is_open()) {
-        return;
+        return nullptr;
     }
-    ifstream ifsLd2(ld2Path, ifstream::binary);
+    ifsLd2.open(ld2Path, ifstream::binary);
     if (!ifsLd2.is_open()) {
-        return;
+        return nullptr;
     }
 
     ifsSd.seekg(0, ifsSd.end);
@@ -239,6 +239,7 @@ void SdReader::readSd() {
 
     ifsSd.seekg(0, ifsSd.beg);
 
+    Dict* dict = new Dict(sdPath, this);
     while(true) {
         if (ifsSd.tellg() >= fileSize) {
             break;
@@ -251,9 +252,8 @@ void SdReader::readSd() {
 
         for (int i = 0; i < itemCount; i++) {
             int wordLen = readu1(ifsSd);
-            string word(wordLen, ' ');
-            ifsSd.read(const_cast<char*>(word.c_str()), wordLen);
-            //log("word = %s\n", word.c_str());
+            string text(wordLen, ' ');
+            ifsSd.read(const_cast<char*>(text.c_str()), wordLen);
 
             int defOffset = readu2(ifsSd);
             int defLen = readu4(ifsSd);
@@ -265,15 +265,31 @@ void SdReader::readSd() {
                 partIndexs[ii] = readu4(ifsSd);
             }
             if (type == 4) {
-                string path = resPath + "/" + word;
-                log("i = %d, pic name = %s, partCount = %d\n", i, word.c_str(), defPartCount);
-                readRes(defOffset, defLen, defPartCount, partIndexs, 0x4000, path);
+                string path = resPath + "/" + text;
+                //log("content = %s\n", path.c_str());
+                //readRes(defOffset, defLen, defPartCount, partIndexs, 0x4000, path);
+                ResInfo* info = new ResInfo;
+                info->defOffset = defOffset;
+                info->defLen = defLen;
+                info->defPartCount = defPartCount;
+                info->defPartIndexs = partIndexs;
+                info->filePath = path;
+                dict->picMap.insert(std::pair<string, ResInfo*>(text, info));
             } else if (type == 3) {
-                //readDef(defOffset, defLen, defPartCount, partIndexs, 0x4000);
+                Word* word = new Word();
+                word->text = text;
+                word->dict = dict;
+                word->defOffset = defOffset;
+                word->defLen = defLen;
+                word->defPartCount = defPartCount;
+                word->defPartIndexs = partIndexs;
+                dict->wordList.push_back(word);
+
+                //string defcontent = readDef(defOffset, defLen, defPartCount, partIndexs, 0x4000);
+                //log("content = %s\n", defcontent.c_str());
             }
         }
     }
-
     ifsSd.close();
+    return dict;
 }
-

@@ -38,6 +38,6 @@ public:
     SdReader(const string ld2Path, const string sdPath, const string resPath);
     string readDef(int defOffset, int defLen, int partCount, vector<int> entryIndexs, int srcPartLen);
     void readRes(int defOffset, int defLen, int partCount, vector<int> entryIndexs, int srcPartLen, string filePath);
-    void readSd();
+    Dict* readSd();
 };
 #endif

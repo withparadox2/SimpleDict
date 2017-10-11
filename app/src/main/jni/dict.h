@@ -4,19 +4,33 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <map>
 
 using namespace std;
 class Word;
+class SdReader;
+
+class ResInfo {
+public:
+    int defOffset;
+    int defLen;
+    int defPartCount;
+    vector<int> defPartIndexs;
+    string filePath;
+};
+
 class Dict {
 public:
     bool isSelected;
     int order;
     vector<Word*> wordList;
 
-    ifstream ifsInflated;
-    string inflatedPath;
+    string sdPath;
     string name;
-    Dict(string& inflatedPath);
+    SdReader* reader;
+    map<string, ResInfo*> picMap;
+    
+    Dict(string sdPath, SdReader* reader);
     ~Dict();
     void printWords();
 
@@ -25,21 +39,27 @@ public:
     static void printWordList(vector<Word*>& list);
     void setSelected(bool isSelected);
     void setOrder(int order);
+    void loadRes(vector<string> resList);
 
 private:
     int binarySearch(int begin, int end, int index, char c, bool isTop);
     char getWordChar(int wordIndex, int index);
+
 };
 
 class Word {
 public:
-    int contentPos;
-    int contentSize;
+    Dict* dict;
     string text;
     string content;
-    Dict* dict;
     string getContent();
     void readContent();
+
+    //Config for retreving content from ld2 file
+    int defOffset;
+    int defLen;
+    int defPartCount;
+    vector<int> defPartIndexs;
 };
 
 class SearchItem {

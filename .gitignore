@@ -15,3 +15,4 @@ libs/**/.so
 *.swp
 *.un~
 *~
+dict/

@@ -1,14 +1,16 @@
 ﻿#include "dict.h"
+#include "ld2reader.h"
 #include <iostream>
+#include "log.h"
 
-Dict::Dict(string& inflatedPath) : ifsInflated(inflatedPath.c_str(), ifstream::binary), inflatedPath(inflatedPath), isSelected(false) {
-    auto from = inflatedPath.find_last_of("/\\");
-    auto to = inflatedPath.find(".ld2");
+Dict::Dict(string sdPath, SdReader* reader) : reader(reader), sdPath(sdPath), isSelected(false) {
+    auto from = sdPath.find_last_of("/\\");
+    auto to = sdPath.find(".ld2");
     from = from == string::npos ? 0 : from + 1;
     if (to != string::npos) {
-        this->name = inflatedPath.substr(from, to - from);
+        this->name = sdPath.substr(from, to - from);
     } else {
-        this->name = inflatedPath;
+        this->name = sdPath;
     }
 }
 
@@ -16,8 +18,8 @@ Dict::~Dict() {
     for (auto word : wordList) {
         delete word;
     }
-    ifsInflated.close();
 }
+
 void Dict::printWords() {
     int times = 0;
     for(auto iter = wordList.begin(); iter != wordList.end(); iter++) {
@@ -26,7 +28,7 @@ void Dict::printWords() {
     }
 }
 bool Dict::isClose() {
-    return ifsInflated.is_open();
+    return false;
 }
 
 int Dict::binarySearch(int begin, int end, int index, char c, bool isTop) {
@@ -109,7 +111,7 @@ vector<Word*> Dict::search(const string& text) {
 void Dict::printWordList(vector<Word*>& wordList) {
     for(auto iter = wordList.begin(); iter != wordList.end(); iter++) {
         cout << (*iter)->text << endl;
-        //cout << (*iter)->getContent() << endl;
+        cout << (*iter)->getContent() << endl;
     }
 }
 
@@ -121,6 +123,17 @@ void Dict::setOrder(int order) {
     this->order = order;
 }
 
+void Dict::loadRes(vector<string> resList) {
+    for (string name : resList) {
+        auto it = picMap.find(name);
+        if (it != picMap.end()) {
+            ResInfo* info = it->second;
+            reader->readRes(info->defOffset, info->defLen, info->defPartCount, 
+                    info->defPartIndexs, 0x4000, info->filePath);
+        }
+    }
+}
+
 string Word::getContent() {
     if (content.size() == 0) {
         readContent();
@@ -128,17 +141,19 @@ string Word::getContent() {
     return content;
 }
 void Word::readContent() {
-    content.resize(contentSize);
-    char* data = const_cast<char*>(content.c_str());
-    dict->ifsInflated.seekg(contentPos, dict->ifsInflated.beg);
-    dict->ifsInflated.read(data, contentSize);
+//   content.resize(contentSize);
+//   char* data = const_cast<char*>(content.c_str());
+//   dict->ifsInflated.seekg(contentPos, dict->ifsInflated.beg);
+//   dict->ifsInflated.read(data, contentSize);
+    
+    content = dict->reader->readDef(defOffset, defLen, defPartCount, defPartIndexs, 0x4000);
 }
 
 void SearchItem::print() {
     cout << "=============" << endl;
     cout << this->text << endl;
     for (auto word : wordList) {
-        cout << word->dict->inflatedPath << endl;
+        cout << word->dict->sdPath << endl;
     }
 }
 

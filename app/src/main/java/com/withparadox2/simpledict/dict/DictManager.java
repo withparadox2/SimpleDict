@@ -29,7 +29,7 @@ public class DictManager {
   private static final String KEY_ACTIVE_DICTS = "active_dicts";
 
   public static boolean isInstalled(File ld2File) {
-    return new File(ld2File.getParent(), ld2File.getName() + ".inflated").exists();
+    return new File(ld2File.getParent(), ld2File.getName() + ".sd").exists();
   }
 
   public static void installAndPrepareAll(final Runnable finalAction) {
