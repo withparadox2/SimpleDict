@@ -60,3 +60,9 @@ char* getChars(int len) {
     return chars;
 }
 
+int getStreamSize(ifstream& ifs) {
+    ifs.seekg(0, ifs.end);
+    int size = ifs.tellg();
+    ifs.seekg(0, ifs.beg);
+    return size;
+}

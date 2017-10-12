@@ -50,4 +50,6 @@ T readNum(ifstream& input, int offset, int len) {
     readNum<T>(input, len);
 }
 
+int getStreamSize(ifstream& ifs);
+
 #endif

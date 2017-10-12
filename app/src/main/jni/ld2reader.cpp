@@ -52,10 +52,7 @@ int Ld2Extractor::process() {
         return -1;
     }
 
-    ifs.seekg(0, ifs.end);
-    int fileSize = ifs.tellg();
-
-    ifs.seekg(0, ifs.beg);
+    int fileSize = getStreamSize(ifs);
 
     int sectionPos = 88;
     while (true) {
@@ -244,10 +241,7 @@ Dict* SdReader::readSd() {
         return nullptr;
     }
 
-    ifsSd.seekg(0, ifsSd.end);
-    int fileSize = ifsSd.tellg();
-
-    ifsSd.seekg(0, ifsSd.beg);
+    int fileSize = getStreamSize(ifsSd);
 
     Dict* dict = new Dict(sdPath, this);
     while(true) {
