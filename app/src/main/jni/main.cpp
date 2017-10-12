@@ -20,21 +20,19 @@ int main() {
     installDict("dict/Oxford+Advanced+Learner's+English-Chinese+Dictionary.ld2", true);
 }
 
-void installDict(const char* path, bool isSelected) {
+void installDict(const char* path, bool isActive) {
     install(path, false);
     Dict* dict = prepare(path);
     if (dict) {
-        dict->setSelected(isSelected);
+        dict->setIsActive(isActive);
     }
-    vector<Word*> words = dict->search("hello");
-    log("search count = %d\n", words.size());
-    dict->printWordList(words);
+    auto wordList = dict->search("hello");
+    dict->printWordList(wordList);
 }
 
 void sortWords(vector<Word*>& wordList) {
     SortWord<Word*> sortObj;
     sort(wordList.begin(), wordList.end(), sortObj);
-    cout << wordList.size() << endl;
 }
 
 bool isFileExist(const string& filePath) {
@@ -89,7 +87,7 @@ Dict* prepare(const char* filePath) {
 }
  
 //I make a mistake, with rvo unique_ptr is also acceptable.
-vector<shared_ptr<SearchItem>> searchSelectedDicts(const char* searchText) {
+vector<shared_ptr<SearchItem>> searchActiveDicts(const char* searchText) {
     vector<vector<Word*>> allWords;
     vector<Dict*> dictList;
     getSortedDictList(dictList);
@@ -142,7 +140,7 @@ string getResFolder(string filePath) {
 void getSortedDictList(vector<Dict*>& dictList) {
     for (auto& pair : pathToDict) {
         Dict* dict = pair.second;
-        if (dict && dict->isSelected) {
+        if (dict && dict->isActive) {
             dictList.push_back(dict);
         }
     }

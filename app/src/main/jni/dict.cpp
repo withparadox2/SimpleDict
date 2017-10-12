@@ -3,7 +3,7 @@
 #include <iostream>
 #include "log.h"
 
-Dict::Dict(string sdPath, SdReader* reader) : reader(reader), sdPath(sdPath), isSelected(false) {
+Dict::Dict(string sdPath, SdReader* reader) : reader(reader), sdPath(sdPath), isActive(false) {
     auto from = sdPath.find_last_of("/\\");
     auto to = sdPath.find(".ld2");
     from = from == string::npos ? 0 : from + 1;
@@ -119,8 +119,8 @@ void Dict::printWordList(vector<Word*>& wordList) {
     }
 }
 
-void Dict::setSelected(bool isSelected) {
-    this->isSelected = isSelected;
+void Dict::setIsActive(bool isActive) {
+    this->isActive = isActive;
 }
 
 void Dict::setOrder(int order) {
@@ -144,6 +144,7 @@ string Word::getContent() {
     }
     return content;
 }
+
 void Word::readContent() {
 //   content.resize(contentSize);
 //   char* data = const_cast<char*>(content.c_str());

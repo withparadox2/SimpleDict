@@ -21,7 +21,7 @@ public:
 
 class Dict {
 public:
-    bool isSelected;
+    bool isActive;
     int order;
     vector<Word*> wordList;
 
@@ -37,7 +37,7 @@ public:
     bool isClose();
     vector<Word*> search(const string& text);
     static void printWordList(vector<Word*>& list);
-    void setSelected(bool isSelected);
+    void setIsActive(bool isActive);
     void setOrder(int order);
     void loadRes(vector<string> resList);
 

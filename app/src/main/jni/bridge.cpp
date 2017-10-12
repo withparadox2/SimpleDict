@@ -34,7 +34,7 @@ jstring jni_get_dict_name (JNIEnv* env, jclass clazz, jlong wordHandle) {
 
 jobject jni_search(JNIEnv* env, jclass clazz, jstring text) {
     const char* searchText = env->GetStringUTFChars(text, 0);
-    auto searchItems = searchSelectedDicts(searchText);
+    auto searchItems = searchActiveDicts(searchText);
     //TODO cache all these staffs
 
     jclass list_clazz = env->FindClass("java/util/ArrayList");
@@ -70,7 +70,7 @@ jobject jni_search(JNIEnv* env, jclass clazz, jstring text) {
 jboolean jni_activate_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
     Dict* dict = (Dict*) dictHandle;
     if (dict) {
-        dict->setSelected(true);
+        dict->setIsActive(true);
         return JNI_TRUE;
     }
     return JNI_FALSE;
@@ -79,7 +79,7 @@ jboolean jni_activate_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
 jboolean jni_deactivate_dict(JNIEnv* env, jclass clazz, jlong dictHandle) {
     Dict* dict = (Dict*) dictHandle;
     if (dict) {
-        dict->setSelected(false);
+        dict->setIsActive(false);
         return JNI_TRUE;
     }
     return JNI_FALSE;
