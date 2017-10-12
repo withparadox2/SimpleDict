@@ -18,6 +18,10 @@ Dict::~Dict() {
     for (auto word : wordList) {
         delete word;
     }
+    for (auto iter = picMap.begin(); iter != picMap.end(); iter++) {
+        delete iter->second;
+    }
+    delete reader;
 }
 
 void Dict::printWords() {
