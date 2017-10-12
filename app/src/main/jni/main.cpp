@@ -17,17 +17,19 @@ using namespace std;
 map<string, Dict*> pathToDict;
 
 int main() {
-    installDict("dict/Oxford+Advanced+Learner's+English-Chinese+Dictionary.ld2", true);
+    installDict("dict/Oxford Advanced Learner's English-Chinese Dictionary.ld2", true);
 }
 
 void installDict(const char* path, bool isActive) {
-    install(path, false);
-    Dict* dict = prepare(path);
-    if (dict) {
-        dict->setIsActive(isActive);
+    int result = install(path, false);
+    if (result == 0) {
+        Dict* dict = prepare(path);
+        if (dict) {
+            dict->setIsActive(isActive);
+        }
+        auto wordList = dict->search("hello");
+        dict->printWordList(wordList);
     }
-    auto wordList = dict->search("hello");
-    dict->printWordList(wordList);
 }
 
 void sortWords(vector<Word*>& wordList) {

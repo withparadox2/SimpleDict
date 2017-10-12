@@ -54,7 +54,7 @@ public:
     string text;
     string getContent();
 
-    //Config for retreving content from ld2 file
+    //Config for retrieving content from ld2 file
     SdCellInfo* info;
     ~Word();
 };

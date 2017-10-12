@@ -196,7 +196,11 @@ void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, 
 
         for (int ii = 0; ii <= defPartCount; ii++) {
             partIndexs[ii] = encryIndexs[ii + defPartIndex];
-            write4(ofs, partIndexs[ii]);
+            if (ii == 0) {
+                write4(ofs, partIndexs[ii]);
+            } else {
+                write2(ofs, partIndexs[ii] - partIndexs[ii - 1]);
+            }
         }
     }
 }
@@ -268,7 +272,11 @@ Dict* SdReader::readSd() {
             vector<int> partIndexs(defPartCount + 1);
 
             for (int ii = 0; ii <= defPartCount; ii++) {
-                partIndexs[ii] = readu4(ifsSd);
+                if (ii == 0) {
+                    partIndexs[ii] = readu4(ifsSd);
+                } else {
+                    partIndexs[ii] = partIndexs[ii - 1] + readu2(ifsSd);
+                }
             }
             SdCellInfo* info = new SdCellInfo(defOffset, defLen, defPartCount, partIndexs);
             if (type == 4) {
