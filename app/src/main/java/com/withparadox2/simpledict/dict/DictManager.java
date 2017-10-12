@@ -1,7 +1,6 @@
 package com.withparadox2.simpledict.dict;
 
 import android.text.TextUtils;
-import com.withparadox2.simpledict.DictApp;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.util.FileUtil;
 import com.withparadox2.simpledict.util.PreferencesUtil;
@@ -78,7 +77,7 @@ public class DictManager {
               sExecutor.shutdown();
               sExecutor = null;
               if (finalAction != null) {
-                DictApp.getInstance().run(finalAction);
+                Util.post(finalAction);
               }
             }
           }
