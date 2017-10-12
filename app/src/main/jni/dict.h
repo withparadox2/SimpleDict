@@ -10,13 +10,14 @@ using namespace std;
 class Word;
 class SdReader;
 
-class ResInfo {
+class SdCellInfo {
 public:
     int defOffset;
     int defLen;
     int defPartCount;
     vector<int> defPartIndexs;
     string filePath;
+    SdCellInfo(int defOffset, int defLen, int defPartCount, vector<int>& defPartIndexs);
 };
 
 class Dict {
@@ -28,7 +29,7 @@ public:
     string sdPath;
     string name;
     SdReader* reader;
-    map<string, ResInfo*> picMap;
+    map<string, SdCellInfo*> picMap;
     
     Dict(string sdPath, SdReader* reader);
     ~Dict();
@@ -51,15 +52,11 @@ class Word {
 public:
     Dict* dict;
     string text;
-    string content;
     string getContent();
-    void readContent();
 
     //Config for retreving content from ld2 file
-    int defOffset;
-    int defLen;
-    int defPartCount;
-    vector<int> defPartIndexs;
+    SdCellInfo* info;
+    ~Word();
 };
 
 class SearchItem {

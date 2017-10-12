@@ -39,5 +39,6 @@ public:
     string readDef(int defOffset, int defLen, int partCount, vector<int> entryIndexs, int srcPartLen);
     void readRes(int defOffset, int defLen, int partCount, vector<int> entryIndexs, int srcPartLen, string filePath);
     Dict* readSd();
+    ~SdReader();
 };
 #endif

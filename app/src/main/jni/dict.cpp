@@ -3,6 +3,9 @@
 #include <iostream>
 #include "log.h"
 
+SdCellInfo::SdCellInfo(int defOffset, int defLen, int defPartCount, vector<int>& defPartIndexs)
+    : defOffset(defOffset), defLen(defLen), defPartCount(defPartCount), defPartIndexs(defPartIndexs) {}
+
 Dict::Dict(string sdPath, SdReader* reader) : reader(reader), sdPath(sdPath), isActive(false) {
     auto from = sdPath.find_last_of("/\\");
     auto to = sdPath.find(".ld2");
@@ -131,7 +134,7 @@ void Dict::loadRes(vector<string> resList) {
     for (string name : resList) {
         auto it = picMap.find(name);
         if (it != picMap.end()) {
-            ResInfo* info = it->second;
+            SdCellInfo* info = it->second;
             reader->readRes(info->defOffset, info->defLen, info->defPartCount, 
                     info->defPartIndexs, 0x4000, info->filePath);
         }
@@ -139,19 +142,12 @@ void Dict::loadRes(vector<string> resList) {
 }
 
 string Word::getContent() {
-    if (content.size() == 0) {
-        readContent();
-    }
-    return content;
+    return dict->reader->readDef(info->defOffset, info->defLen, info->defPartCount, 
+            info->defPartIndexs, 0x4000);
 }
 
-void Word::readContent() {
-//   content.resize(contentSize);
-//   char* data = const_cast<char*>(content.c_str());
-//   dict->ifsInflated.seekg(contentPos, dict->ifsInflated.beg);
-//   dict->ifsInflated.read(data, contentSize);
-    
-    content = dict->reader->readDef(defOffset, defLen, defPartCount, defPartIndexs, 0x4000);
+Word::~Word() {
+    delete info;
 }
 
 void SearchItem::print() {

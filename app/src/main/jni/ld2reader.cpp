@@ -205,6 +205,12 @@ SdReader::SdReader(const string ld2Path, const string sdPath, const string resPa
     : BaseParser(ld2Path, sdPath), resPath(resPath) {
 }
 
+SdReader::~SdReader() {
+    if (ifsLd2.is_open()) {
+        ifsLd2.close();
+    }
+}
+
 string SdReader::readDef(int defOffset, int defLen, int partCount, vector<int> encryIndexs, int srcPartLen) {
     vector<char> originData;
     int resultSize = 0;
@@ -264,25 +270,16 @@ Dict* SdReader::readSd() {
             for (int ii = 0; ii <= defPartCount; ii++) {
                 partIndexs[ii] = readu4(ifsSd);
             }
+            SdCellInfo* info = new SdCellInfo(defOffset, defLen, defPartCount, partIndexs);
             if (type == 4) {
-                string path = resPath + "/" + text;
-                //log("content = %s\n", path.c_str());
                 //readRes(defOffset, defLen, defPartCount, partIndexs, 0x4000, path);
-                ResInfo* info = new ResInfo;
-                info->defOffset = defOffset;
-                info->defLen = defLen;
-                info->defPartCount = defPartCount;
-                info->defPartIndexs = partIndexs;
-                info->filePath = path;
-                dict->picMap.insert(std::pair<string, ResInfo*>(text, info));
+                info->filePath = resPath + "/" + text;
+                dict->picMap.insert(std::pair<string, SdCellInfo*>(text, info));
             } else if (type == 3) {
                 Word* word = new Word();
                 word->text = text;
                 word->dict = dict;
-                word->defOffset = defOffset;
-                word->defLen = defLen;
-                word->defPartCount = defPartCount;
-                word->defPartIndexs = partIndexs;
+                word->info = info;
                 dict->wordList.push_back(word);
 
                 //string defcontent = readDef(defOffset, defLen, defPartCount, partIndexs, 0x4000);
