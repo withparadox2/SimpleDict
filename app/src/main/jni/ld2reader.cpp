@@ -155,8 +155,10 @@ void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, 
 
     write1(ofs, type);
 
-    int picCount = cellCount - 1;
-    write4(ofs, picCount);
+    int totalCountPos = ofs.tellp();
+
+    int totalCount = cellCount - 1;
+    write4(ofs, totalCount);
 
     for (int i = 1; i < cellCount; i++) {
         int keyPosBeg = keyPosList[i - 1];
@@ -166,14 +168,17 @@ void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, 
         int namePos = keyPos + keyPosBeg;
 
         string fileName(rPtr + namePos, nameLen);
-        
-        //log("i = %d, fineName = %s\n", i, fileName.c_str());
 
         int dataPosBeg = dataPosList[i - 1];
         int dataPosEnd = dataPosList[i];
 
         int defPos = keyPos + keySize + dataPosBeg;
         int defLen = dataPosEnd - dataPosBeg;
+
+        if (defLen == 0) {
+            totalCount--;
+            continue;
+        }
 
         int defPartIndex = defPos / srcPartLen;
         int defOffset = defPos - defPartIndex * srcPartLen;
@@ -200,6 +205,9 @@ void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, 
             }
         }
     }
+    ofs.seekp(totalCountPos, ofs.beg);
+    write4(ofs, totalCount);
+    ofs.seekp(0, ofs.end);
 }
 
 SdReader::SdReader(const string ld2Path, const string sdPath, const string resPath) 
