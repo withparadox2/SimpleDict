@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <algorithm>
 
 #include <string.h>
@@ -14,10 +14,10 @@
 
 using namespace std;
 
-map<string, Dict*> pathToDict;
+unordered_map<string, Dict*> pathToDict;
 
 int main() {
-    installDict("dict/Oxford Advanced Learner's English-Chinese Dictionary.ld2", true);
+    installDict("dict/Oxford+Advanced+Learner's+English-Chinese+Dictionary.ld2", true);
 }
 
 void installDict(const char* path, bool isActive) {
@@ -98,7 +98,7 @@ vector<shared_ptr<SearchItem>> searchActiveDicts(const char* searchText) {
     }
     
     vector<shared_ptr<SearchItem>> searchList;
-    map<string, SearchItem*> wordToPtr;
+    unordered_map<string, SearchItem*> wordToPtr;
     for (auto& wordList : allWords) {
         for (auto& wordPtr : wordList) {
             auto cache = wordToPtr.find(wordPtr->text);

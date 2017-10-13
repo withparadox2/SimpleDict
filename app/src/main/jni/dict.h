@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 class Word;
@@ -29,7 +29,7 @@ public:
     string sdPath;
     string name;
     SdReader* reader;
-    map<string, SdCellInfo*> picMap;
+    unordered_map<string, SdCellInfo*> picMap;
     
     Dict(string sdPath, SdReader* reader);
     ~Dict();
