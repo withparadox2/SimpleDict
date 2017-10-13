@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
@@ -33,6 +35,8 @@ public class WordDetailActivity extends BaseActivity {
   protected SearchItem mCurItem;
   protected List<SearchItem> mItemList = new ArrayList<>();
   private ExecutorService mExecutor;
+  private boolean mIsWvLoadFinish = false;
+  private Runnable mLoadFinishAction;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -43,6 +47,9 @@ public class WordDetailActivity extends BaseActivity {
     }
     webView.getSettings().setAllowFileAccess(true);
     webView.getSettings().setJavaScriptEnabled(true);
+    webView.setWebViewClient(new MyClient());
+    webView.setWebChromeClient(new WebChromeClient());
+    webView.loadUrl("file:///android_asset/main.html");
     updateIntent();
     loadContentIntoWebView();
   }
@@ -84,11 +91,11 @@ public class WordDetailActivity extends BaseActivity {
         @Override public void run() {
           String dictName = NativeLib.getDictName(word.ref);
           final StringBuilder detail = new StringBuilder();
-          detail.append("<div style=\"background:#f2f2f2;padding: 10px;\">")
+          detail.append("<div class='dict-title'>")
               .append(dictName)
               .append("</div>");
 
-          detail.append("<div style=\"padding: 8px\">")
+          detail.append("<div class='word-detail'>")
               .append(formatContent(NativeLib.getContent(word.ref), dictName, word))
               .append("</div>");
           synchronized (results) {
@@ -101,15 +108,18 @@ public class WordDetailActivity extends BaseActivity {
               }
               WordDetailActivity.this.runOnUiThread(new Runnable() {
                 @Override public void run() {
-                  webView.loadDataWithBaseURL("", "<!DOCTYPE html>\n"
-                      + "<html>"
-                      + "<head>"
-                      + "    <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"
-                      + "</head>"
-                      + "<body style=\"margin: 0;\">"
-                      + sb.toString()
-                      + "</body>"
-                      + "</html>", "text/html", "UTF-8", null);
+                  Runnable render = new Runnable() {
+                    @Override public void run() {
+                      webView.loadUrl("javascript:window.setContent('"
+                          + sb.toString().replaceAll("'", "\\\\'")
+                          + "');");
+                    }
+                  };
+                  if (mIsWvLoadFinish) {
+                    render.run();
+                  } else {
+                    mLoadFinishAction = render;
+                  }
                 }
               });
             }
@@ -149,7 +159,7 @@ public class WordDetailActivity extends BaseActivity {
         + base
         + "/simpledict/"
         + dictName
-        + "/$1\" $2 style=\"max-width: 100%\"></img>");
+        + "/$1\" $2></img>");
 
     matcher.reset();
     String basePath = base + "/simpledict/" + dictName + "/";
@@ -190,5 +200,16 @@ public class WordDetailActivity extends BaseActivity {
     items.add(item);
     intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEMS, (Serializable) items);
     return intent;
+  }
+
+  class MyClient extends WebViewClient {
+    @Override public void onPageFinished(WebView view, String url) {
+      super.onPageFinished(view, url);
+      mIsWvLoadFinish = true;
+      if (mLoadFinishAction != null) {
+        mLoadFinishAction.run();
+        mLoadFinishAction = null;
+      }
+    }
   }
 }
