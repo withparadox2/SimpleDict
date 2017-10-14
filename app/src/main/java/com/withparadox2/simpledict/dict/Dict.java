@@ -15,7 +15,6 @@ public class Dict implements Comparable<Dict> {
   private File file;
   private boolean isInstalled;
   private boolean isActive;
-  private Object tag;
   private int order;
   private String id;
 
@@ -33,7 +32,7 @@ public class Dict implements Comparable<Dict> {
     if (obj == null) {
       return false;
     }
-    return this.name.equals(obj.name);
+    return this.id.equals(obj.getId());
   }
 
   public void setIsInstalled(boolean isInstalled) {
@@ -70,22 +69,6 @@ public class Dict implements Comparable<Dict> {
 
   public boolean isReady() {
     return ref != 0;
-  }
-
-  public void setTag(Object tag) {
-    this.tag = tag;
-  }
-
-  public Object getTag() {
-    return tag;
-  }
-
-  public Dict copy() {
-    Dict d = new Dict(name, file);
-    d.ref = this.ref;
-    d.isInstalled = this.isInstalled;
-    d.isActive = this.isActive;
-    return d;
   }
 
   public int getOrder() {

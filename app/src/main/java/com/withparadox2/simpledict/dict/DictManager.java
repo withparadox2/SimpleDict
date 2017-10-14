@@ -65,7 +65,7 @@ public class DictManager {
             NativeLib.install(file.getAbsolutePath());
           }
           dict.setIsInstalled(true);
-          if (activeSet.contains(dict.getName())) {
+          if (activeSet.contains(dict.getId())) {
             activateDict(dict);
           }
 
@@ -113,8 +113,8 @@ public class DictManager {
   private static Set<String> getActiveDictSet() {
     String dictStr = PreferencesUtil.getString(KEY_ACTIVE_DICTS, "");
     if (!TextUtils.isEmpty(dictStr)) {
-      String[] dicts = dictStr.split("###");
-      return new HashSet<>(Arrays.asList(dicts));
+      String[] dictIds = dictStr.split("#");
+      return new HashSet<>(Arrays.asList(dictIds));
     }
     return new HashSet<>(0);
   }
@@ -124,23 +124,23 @@ public class DictManager {
     for (Dict dict : dicts) {
       if (dict.isActive()) {
         if (sb.length() != 0) {
-          sb.append("###");
+          sb.append("#");
         }
-        sb.append(dict.getName());
+        sb.append(dict.getId());
       }
     }
     PreferencesUtil.putString(KEY_ACTIVE_DICTS, sb.toString());
   }
 
   public static int getOrder(Dict dict) {
-    return PreferencesUtil.getInt(dict.getName() + "-order", -1);
+    return PreferencesUtil.getInt(dict.getId() + "-order", -1);
   }
 
   public static void saveOrders(List<Dict> list) {
     for (int i = 0; i < list.size(); i++) {
       Dict dict = list.get(i);
       dict.setOrder(i);
-      PreferencesUtil.putInt(dict.getName() + "-order", i);
+      PreferencesUtil.putInt(dict.getId() + "-order", i);
     }
   }
 }
