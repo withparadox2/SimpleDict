@@ -4,7 +4,7 @@ function setContent(text) {
     var container = getContainer();
     saveToStack(container);
     container.innerHTML = text;
-    container.scrollTop = 0;
+    window.scrollTo(0, 0);
     var wordItems = container.getElementsByClassName('word-item') || [];
     Array.prototype.forEach.call(wordItems, function(word) {
         var header = word.childNodes[0];
@@ -20,7 +20,7 @@ function saveToStack(container) {
     if (container && container.childNodes && container.childNodes.length > 0) {
         backStack.push({
             value: container.childNodes[0],
-            position: container.scrollTop
+            position: window.scrollY
         })
     }
 }
@@ -28,7 +28,7 @@ function saveToStack(container) {
 function restoreFromStack(container, item) {
     container.innerHTML = '';
     container.appendChild(item.value);
-    container.scrollTop = item.position;
+    window.scrollTo(0, item.position);
     currentShowWord = item.key;
 }
 

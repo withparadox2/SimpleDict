@@ -1,11 +1,6 @@
 html, body, #top-container {
   margin: 0;
   padding: 0;
-  height: 100%;
-}
-
-#top-container {
-  overflow-y: auto;
 }
 
 .dict-title {
