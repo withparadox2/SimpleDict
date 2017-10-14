@@ -7,6 +7,9 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -62,9 +65,15 @@ public class SpyService extends Service {
     PendingIntent resultPendingIntent =
         PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     Notification notification = new NotificationCompat.Builder(this).setContentTitle("SimpleDict")
+        .setLargeIcon(getIconBitmap())
         .setSmallIcon(R.drawable.ic_launcher)
         .setContentIntent(resultPendingIntent)
         .build();
     startForeground(1, notification);
+  }
+
+  private Bitmap getIconBitmap() {
+    Drawable drawable = getResources().getDrawable(R.drawable.ic_launcher);
+    return ((BitmapDrawable) (drawable)).getBitmap();
   }
 }
