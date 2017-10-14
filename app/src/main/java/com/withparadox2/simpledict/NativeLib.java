@@ -15,13 +15,15 @@ public class NativeLib {
 
   public static native int install(String file);
 
-  public static native long prepare(String file);
+  public static native long prepare(String file, String id);
 
   public static native List<SearchItem> search(String text);
 
   public static native String getContent(long wordHandle);
 
   public static native String getDictName(long wordHandle);
+
+  public static native String getDictId(long wordHandle);
 
   public static native boolean activateDict(long dictHandle);
 

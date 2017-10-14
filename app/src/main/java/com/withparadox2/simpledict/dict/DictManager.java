@@ -97,7 +97,7 @@ public class DictManager {
   public static void activateDict(Dict dict) {
     dict.setIsActive(true);
     if (!dict.isReady()) {
-      dict.setRef(NativeLib.prepare(dict.getFile().getAbsolutePath()));
+      dict.setRef(NativeLib.prepare(dict.getFile().getAbsolutePath(), dict.getId()));
     }
     NativeLib.activateDict(dict.getRef());
     NativeLib.setDictOrder(dict.getRef(), dict.getOrder());

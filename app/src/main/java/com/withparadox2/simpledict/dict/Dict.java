@@ -9,7 +9,7 @@ import java.io.File;
  * Created by withparadox2 on 2017/8/24.
  */
 
-public class Dict implements Comparable<Dict>{
+public class Dict implements Comparable<Dict> {
   private long ref;
   private String name;
   private File file;
@@ -17,15 +17,16 @@ public class Dict implements Comparable<Dict>{
   private boolean isActive;
   private Object tag;
   private int order;
+  private String id;
 
   public Dict(String name, File file) {
     this.name = name;
     this.file = file;
+    this.id = Util.getDictId(file.getName());
   }
 
   public Dict(File file) {
-    this.name = Util.stripSuffix(file.getName());
-    this.file = file;
+    this(Util.stripSuffix(file.getName()), file);
   }
 
   public boolean equals(Dict obj) {
@@ -71,10 +72,6 @@ public class Dict implements Comparable<Dict>{
     return ref != 0;
   }
 
-  public void prepare() {
-    ref = NativeLib.prepare(file.getPath());
-  }
-
   public void setTag(Object tag) {
     this.tag = tag;
   }
@@ -104,5 +101,13 @@ public class Dict implements Comparable<Dict>{
 
   @Override public int compareTo(@NonNull Dict o) {
     return order - o.order;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 }

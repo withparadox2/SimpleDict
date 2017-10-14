@@ -3,12 +3,17 @@ package com.withparadox2.simpledict.util;
 import android.content.Context;
 import android.widget.Toast;
 import com.withparadox2.simpledict.DictApp;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by withparadox2 on 2017/8/27.
  */
 
 public class Util {
+  public static final String MD5_SEQ = "0123456789ABCDEF";
+
   public static void toast(final String text) {
     post(new Runnable() {
       @Override public void run() {
@@ -79,5 +84,23 @@ public class Util {
       return word.substring(0, word.length() - 2);
     }
     return word;
+  }
+
+  public static String getDictId(String fileName) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      byte[] bytes = md.digest(fileName.getBytes("UTF-8"));
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < 4; i++) {
+        sb.append(MD5_SEQ.charAt((bytes[i] & 0xF0) >> 4));
+        sb.append(MD5_SEQ.charAt((bytes[i] & 0x0F)));
+      }
+      return sb.toString();
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return fileName;
   }
 }

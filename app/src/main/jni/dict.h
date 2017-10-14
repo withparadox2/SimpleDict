@@ -28,6 +28,7 @@ public:
 
     string sdPath;
     string name;
+    string id;
     SdReader* reader;
     unordered_map<string, SdCellInfo*> picMap;
     

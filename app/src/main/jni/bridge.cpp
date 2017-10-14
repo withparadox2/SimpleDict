@@ -13,10 +13,12 @@ jint jni_install(JNIEnv* env, jclass clazz, jstring fileName) {
     return code;
 }
 
-jlong jni_prepare(JNIEnv* env, jclass clazz, jstring fileName) {
+jlong jni_prepare(JNIEnv* env, jclass clazz, jstring fileName, jstring dictId) {
     const char* fileNameChars = env->GetStringUTFChars(fileName, 0);
-    Dict* dict = prepare(fileNameChars);
+    const char* idChars = env->GetStringUTFChars(dictId, 0);
+    Dict* dict = prepare(fileNameChars, idChars);
     env->ReleaseStringUTFChars(fileName, fileNameChars);
+    env->ReleaseStringUTFChars(dictId, idChars);
     return (jlong)dict;
 }
 
@@ -29,6 +31,12 @@ jstring jni_get_content (JNIEnv* env, jclass clazz, jlong wordHandle) {
 jstring jni_get_dict_name (JNIEnv* env, jclass clazz, jlong wordHandle) {
     Word* word = (Word*)wordHandle;
     string text = word->dict->name;
+    return env->NewStringUTF(text.c_str());
+}
+
+jstring jni_get_dict_id (JNIEnv* env, jclass clazz, jlong wordHandle) {
+    Word* word = (Word*)wordHandle;
+    string text = word->dict->id;
     return env->NewStringUTF(text.c_str());
 }
 
@@ -119,7 +127,7 @@ static JNINativeMethod gMethods[] = {
     },
     {
         "prepare",
-        "(Ljava/lang/String;)J",
+        "(Ljava/lang/String;Ljava/lang/String;)J",
         (void*)jni_prepare
     },
     {
@@ -136,6 +144,11 @@ static JNINativeMethod gMethods[] = {
         "getDictName",
         "(J)Ljava/lang/String;",
         (void*)jni_get_dict_name
+    },
+    {
+        "getDictId",
+        "(J)Ljava/lang/String;",
+        (void*)jni_get_dict_id
     },
     {
         "activateDict",

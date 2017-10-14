@@ -13,7 +13,7 @@ vector<shared_ptr<SearchItem>> searchActiveDicts(const char* searchText);
 
 void installDict(const char* path, bool isActive = true);
 
-string getResFolder(string filePath);
+string getResFolder(string filePath, string id);
 
 void getSortedDictList(vector<Dict*>& dictList);
 
@@ -27,6 +27,6 @@ int install(const char* filePath, bool prepare = false);
 
 void release();
 
-Dict* prepare(const char* filePath);
+Dict* prepare(const char* filePath, const char* id);
 
 #endif

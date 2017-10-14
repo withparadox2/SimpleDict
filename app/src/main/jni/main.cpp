@@ -23,12 +23,19 @@ int main() {
 void installDict(const char* path, bool isActive) {
     int result = install(path, false);
     if (result == 0) {
-        Dict* dict = prepare(path);
+        Dict* dict = prepare(path, "oalecd");
         if (dict) {
             dict->setIsActive(isActive);
         }
         auto wordList = dict->search("hello");
         dict->printWordList(wordList);
+
+        vector<string> picList;
+        for (auto iter = dict->picMap.begin(); iter != dict->picMap.end(); iter++) {
+            picList.push_back(iter->first);
+            break;
+        }
+        dict->loadRes(picList);
     }
 }
 
@@ -68,19 +75,20 @@ void release() {
     }
 }
 
-Dict* prepare(const char* filePath) {
+Dict* prepare(const char* filePath, const char* id) {
     string ld2Path(filePath);
     string sdPath = ld2Path + ".sd";
     if (!isFileExist(sdPath)) {
         return nullptr;
     }
 
-    SdReader* reader = new SdReader(ld2Path, sdPath, getResFolder(sdPath));
+    SdReader* reader = new SdReader(ld2Path, sdPath, getResFolder(sdPath, id));
     Dict* dict = reader->readSd();
     if (!dict) {
         delete reader;
         return nullptr;
     }
+    dict->id = id;
 
     pathToDict.insert(std::pair<string, Dict*>(sdPath, dict));
 
@@ -119,24 +127,13 @@ vector<shared_ptr<SearchItem>> searchActiveDicts(const char* searchText) {
     return searchList;
 }
 
-string getResFolder(string filePath) {
-    string folder;
+string getResFolder(string filePath, string id) {
     auto split = filePath.find_last_of("/\\");
     string parent;
-    string fileName = filePath;
     if (split != string::npos) {
         parent = filePath.substr(0, split);
-        fileName = filePath.substr(split + 1);
     }
-
-    split = fileName.find_first_of(".");
-    if (split != string::npos) {
-        fileName = fileName.substr(0, split);
-    } else {
-        fileName = fileName + "-res";
-    }
-    folder = parent + "/" + fileName;
-    return folder;
+    return parent + "/" + id;
 }
 
 void getSortedDictList(vector<Dict*>& dictList) {

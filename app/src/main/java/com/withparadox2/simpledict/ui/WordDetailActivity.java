@@ -99,12 +99,13 @@ public class WordDetailActivity extends BaseActivity {
       mExecutor.execute(new Runnable() {
         @Override public void run() {
           String dictName = NativeLib.getDictName(word.ref);
+          String dictId = NativeLib.getDictId(word.ref);
           final StringBuilder detail = new StringBuilder();
           detail.append("<div class='word-item'>");
           detail.append("<div class='dict-title'>").append(dictName).append("</div>");
 
           detail.append("<div class='word-detail'>")
-              .append(formatContent(NativeLib.getContent(word.ref), dictName, word))
+              .append(formatContent(NativeLib.getContent(word.ref), dictId, word))
               .append("</div>");
           detail.append("</div>");
           synchronized (results) {
@@ -160,17 +161,17 @@ public class WordDetailActivity extends BaseActivity {
     return R.layout.activity_wod_content;
   }
 
-  private String formatContent(String text, String dictName, Word word) {
+  private String formatContent(String text, String dictId, Word word) {
     String base = getExternalStorageDirectory().getAbsolutePath();
 
     Pattern image = Pattern.compile("<Ë M=\"dict://res/(.*?)\"(.*?)/>");
     Matcher matcher = image.matcher(text);
 
     text = matcher.replaceAll(
-        "<img src=\"file://" + base + "/simpledict/" + dictName + "/$1\" $2></img>");
+        "<img src=\"file://" + base + "/simpledict/" + dictId + "/$1\" $2></img>");
 
     matcher.reset();
-    String basePath = base + "/simpledict/" + dictName + "/";
+    String basePath = base + "/simpledict/" + dictId + "/";
 
     StringBuilder sb = new StringBuilder();
     while (matcher.find()) {
