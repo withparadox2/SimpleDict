@@ -59,7 +59,7 @@ public class Util {
 
   public static String cleanWord(String word) {
     word = word.toLowerCase();
-    return word.replaceAll("\\W*$", "");
+    return word.replaceAll("\\W*$", "").replaceAll("^\\W*", "");
   }
 
   public static String getRealWord(String word) {
