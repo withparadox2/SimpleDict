@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -12,6 +14,7 @@ import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.dict.Word;
+import com.withparadox2.simpledict.util.Util;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ public class WordDetailActivity extends BaseActivity {
   private ExecutorService mExecutor;
   private boolean mIsWvLoadFinish = false;
   private Runnable mLoadFinishAction;
+  private List<List<SearchItem>> mBackStack;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -49,9 +53,9 @@ public class WordDetailActivity extends BaseActivity {
     webView.getSettings().setJavaScriptEnabled(true);
     webView.setWebViewClient(new MyClient());
     webView.setWebChromeClient(new WebChromeClient());
+    webView.addJavascriptInterface(new JSInterface(), "jsi");
     webView.loadUrl("file:///android_asset/main.html");
     updateIntent();
-    loadContentIntoWebView();
   }
 
   private void initExecutor(int dictCount) {
@@ -66,7 +70,6 @@ public class WordDetailActivity extends BaseActivity {
     super.onNewIntent(intent);
     setIntent(intent);
     updateIntent();
-    loadContentIntoWebView();
   }
 
   @SuppressWarnings("unchecked") protected void updateIntent() {
@@ -74,6 +77,12 @@ public class WordDetailActivity extends BaseActivity {
         (List<SearchItem>) getIntent().getSerializableExtra(KEY_SEARCH_ITEMS);
     mItemList.clear();
     mItemList.addAll(tempList);
+    clearBackStack();
+    onUpdateItemList();
+    loadContentIntoWebView();
+  }
+
+  protected void onUpdateItemList() {
     mCurItem = mItemList.get(0);
     setTitle(mCurItem.text);
   }
@@ -91,21 +100,23 @@ public class WordDetailActivity extends BaseActivity {
         @Override public void run() {
           String dictName = NativeLib.getDictName(word.ref);
           final StringBuilder detail = new StringBuilder();
-          detail.append("<div class='dict-title'>")
-              .append(dictName)
-              .append("</div>");
+          detail.append("<div class='word-item'>");
+          detail.append("<div class='dict-title'>").append(dictName).append("</div>");
 
           detail.append("<div class='word-detail'>")
               .append(formatContent(NativeLib.getContent(word.ref), dictName, word))
               .append("</div>");
+          detail.append("</div>");
           synchronized (results) {
             results[curIndex] = detail.toString();
             if (isFull(results)) {
 
               final StringBuilder sb = new StringBuilder();
+              sb.append("<div>");
               for (String result : results) {
                 sb.append(result);
               }
+              sb.append("</div>");
               WordDetailActivity.this.runOnUiThread(new Runnable() {
                 @Override public void run() {
                   Runnable render = new Runnable() {
@@ -155,11 +166,8 @@ public class WordDetailActivity extends BaseActivity {
     Pattern image = Pattern.compile("<Ë M=\"dict://res/(.*?)\"(.*?)/>");
     Matcher matcher = image.matcher(text);
 
-    text = matcher.replaceAll("<img src=\"file://"
-        + base
-        + "/simpledict/"
-        + dictName
-        + "/$1\" $2></img>");
+    text = matcher.replaceAll(
+        "<img src=\"file://" + base + "/simpledict/" + dictName + "/$1\" $2></img>");
 
     matcher.reset();
     String basePath = base + "/simpledict/" + dictName + "/";
@@ -202,7 +210,7 @@ public class WordDetailActivity extends BaseActivity {
     return intent;
   }
 
-  class MyClient extends WebViewClient {
+  private class MyClient extends WebViewClient {
     @Override public void onPageFinished(WebView view, String url) {
       super.onPageFinished(view, url);
       mIsWvLoadFinish = true;
@@ -211,5 +219,53 @@ public class WordDetailActivity extends BaseActivity {
         mLoadFinishAction = null;
       }
     }
+  }
+
+  private class JSInterface {
+    @JavascriptInterface public void onClickWord(final String text) {
+      Util.toast(text);
+      Util.post(new Runnable() {
+        @Override public void run() {
+          WordDetailActivity.this.onClickWord(Util.cleanWord(text));
+        }
+      });
+    }
+  }
+
+  protected void onClickWord(String text) {
+    List<SearchItem> wordList = NativeLib.search(text);
+    if (wordList.size() == 0) {
+      text = Util.getRealWord(text);
+      wordList = NativeLib.search(text);
+    }
+    if (wordList.size() > 0) {
+      if (TextUtils.equals(mCurItem.text, wordList.get(0).text)) {
+        return;
+      }
+      if (mBackStack == null) {
+        mBackStack = new ArrayList<>();
+      }
+      mBackStack.add(mItemList);
+      mItemList = wordList;
+      onUpdateItemList();
+      loadContentIntoWebView();
+    }
+  }
+
+  protected void clearBackStack() {
+    if (mBackStack != null) {
+      mBackStack.clear();
+      webView.loadUrl("javascript:window.clearBackStack();");
+    }
+  }
+
+  @Override public void onBackPressed() {
+    if (mBackStack != null && mBackStack.size() > 0) {
+      mItemList = mBackStack.remove(mBackStack.size() - 1);
+      onUpdateItemList();
+      webView.loadUrl("javascript:window.backClick();");
+      return;
+    }
+    super.onBackPressed();
   }
 }

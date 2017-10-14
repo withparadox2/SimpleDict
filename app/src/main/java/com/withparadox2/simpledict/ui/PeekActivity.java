@@ -13,6 +13,7 @@ import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.util.Util;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,24 +23,25 @@ import java.util.List;
 public class PeekActivity extends WordDetailActivity {
   private Spinner spinner;
   private ArrayAdapter<SearchItem> mAdapter;
+  protected List<SearchItem> mShowItemList = new ArrayList<>();
 
   @Override public void setContentView(@LayoutRes int layoutResID) {
     configWindowSize();
     super.setContentView(layoutResID);
     configDecorViewSize();
     spinner = (Spinner) findViewById(R.id.spinner);
-    mAdapter = new ArrayAdapter<>(this, R.layout.item_peek_spinner, mItemList);
+    mAdapter = new ArrayAdapter<>(this, R.layout.item_peek_spinner, mShowItemList);
     mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinner.setAdapter(mAdapter);
     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mCurItem = mAdapter.getItem(position);
+        clearBackStack();
         loadContentIntoWebView();
       }
 
       @Override public void onNothingSelected(AdapterView<?> parent) {
-
       }
     });
   }
@@ -84,5 +86,12 @@ public class PeekActivity extends WordDetailActivity {
     Intent intent = new Intent(context, PeekActivity.class);
     intent.putExtra(WordDetailActivity.KEY_SEARCH_ITEMS, (Serializable) items);
     return intent;
+  }
+
+  @Override protected void onUpdateItemList() {
+    super.onUpdateItemList();
+    mShowItemList.clear();
+    mShowItemList.addAll(mItemList);
+    mAdapter.notifyDataSetChanged();
   }
 }

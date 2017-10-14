@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
+import com.withparadox2.simpledict.util.Util;
 import java.util.List;
 
 /**
@@ -28,10 +29,10 @@ public class SpyService extends Service {
           final ClipData clipdata = clipboard.getPrimaryClip();
           if (clipdata.getItemCount() > 0) {
             String text = clipdata.getItemAt(0).getText().toString();
-            text = cleanWord(text);
+            text = Util.cleanWord(text);
             List<SearchItem> wordList = NativeLib.search(text);
             if (wordList.size() == 0) {
-              text = getRealWord(text);
+              text = Util.getRealWord(text);
               wordList = NativeLib.search(text);
             }
             if (wordList.size() > 0) {
@@ -43,35 +44,6 @@ public class SpyService extends Service {
           }
         }
       };
-
-  private String cleanWord(String word) {
-    word = word.toLowerCase();
-    return word.replaceAll("\\W*$", "");
-  }
-
-  private String getRealWord(String word) {
-    if (word.endsWith("ing")) {
-      return word.replaceAll("ing$", "");
-    } else if (word.endsWith("ies")) {
-      return word.replaceAll("ies$", "y");
-    } else if (word.endsWith("es")) {
-      return word.replaceAll("es$", "");
-    } else if (word.endsWith("s")) {
-      return word.replaceAll("s$", "");
-    } else if (word.endsWith("ied")) {
-      return word.replaceAll("ied$", "y");
-    } else if (word.endsWith("ed")) {
-      int len = word.length();
-      if (len >= 4 && word.charAt(len - 3) == word.charAt(len - 4)) {
-        return word.substring(0, len - 3);
-      } else {
-        return word.substring(0, len - 2);
-      }
-    } else if (word.endsWith("'s")) {
-      return word.substring(0, word.length() - 2);
-    }
-    return word;
-  }
 
   @Nullable @Override public IBinder onBind(Intent intent) {
     return null;

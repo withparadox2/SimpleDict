@@ -51,4 +51,33 @@ public class Util {
       return input;
     }
   }
+
+  public static String cleanWord(String word) {
+    word = word.toLowerCase();
+    return word.replaceAll("\\W*$", "");
+  }
+
+  public static String getRealWord(String word) {
+    if (word.endsWith("ing")) {
+      return word.replaceAll("ing$", "");
+    } else if (word.endsWith("ies")) {
+      return word.replaceAll("ies$", "y");
+    } else if (word.endsWith("es")) {
+      return word.replaceAll("es$", "");
+    } else if (word.endsWith("s")) {
+      return word.replaceAll("s$", "");
+    } else if (word.endsWith("ied")) {
+      return word.replaceAll("ied$", "y");
+    } else if (word.endsWith("ed")) {
+      int len = word.length();
+      if (len >= 4 && word.charAt(len - 3) == word.charAt(len - 4)) {
+        return word.substring(0, len - 3);
+      } else {
+        return word.substring(0, len - 2);
+      }
+    } else if (word.endsWith("'s")) {
+      return word.substring(0, word.length() - 2);
+    }
+    return word;
+  }
 }
