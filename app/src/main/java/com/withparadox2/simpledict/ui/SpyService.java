@@ -62,7 +62,7 @@ public class SpyService extends Service {
     PendingIntent resultPendingIntent =
         PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     Notification notification = new NotificationCompat.Builder(this).setContentTitle("SimpleDict")
-        .setSmallIcon(R.mipmap.ic_launcher)
+        .setSmallIcon(R.drawable.ic_launcher)
         .setContentIntent(resultPendingIntent)
         .build();
     startForeground(1, notification);

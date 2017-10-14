@@ -1,6 +1,5 @@
 <resources>
   <string name="app_name">SimpleDict</string>
-  <string name="setting">设</string>
-  <string name="setting_title">设置</string>
+  <string name="setting_title">Settings</string>
   <string name="install">install</string>
 </resources>
