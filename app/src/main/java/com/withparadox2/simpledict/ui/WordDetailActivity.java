@@ -122,9 +122,8 @@ public class WordDetailActivity extends BaseActivity {
                 @Override public void run() {
                   Runnable render = new Runnable() {
                     @Override public void run() {
-                      webView.loadUrl("javascript:window.setContent('"
-                          + sb.toString().replaceAll("'", "\\\\'")
-                          + "');");
+                      execScript(
+                          "window.setContent('" + sb.toString().replaceAll("'", "\\\\'") + "');");
                     }
                   };
                   if (mIsWvLoadFinish) {
@@ -256,7 +255,7 @@ public class WordDetailActivity extends BaseActivity {
   protected void clearBackStack() {
     if (mBackStack != null) {
       mBackStack.clear();
-      webView.loadUrl("javascript:window.clearBackStack();");
+      execScript("clearBackStack()");
     }
   }
 
@@ -264,9 +263,13 @@ public class WordDetailActivity extends BaseActivity {
     if (mBackStack != null && mBackStack.size() > 0) {
       mItemList = mBackStack.remove(mBackStack.size() - 1);
       onUpdateItemList();
-      webView.loadUrl("javascript:window.backClick();");
+      execScript("backClick()");
       return;
     }
     super.onBackPressed();
+  }
+
+  private void execScript(String jsCode) {
+    webView.loadUrl("javascript:" + jsCode);
   }
 }
