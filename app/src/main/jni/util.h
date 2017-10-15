@@ -51,5 +51,6 @@ T readNum(ifstream& input, int offset, int len) {
 }
 
 int getStreamSize(ifstream& ifs);
+void toLower(string& src);
 
 #endif

@@ -66,3 +66,12 @@ int getStreamSize(ifstream& ifs) {
     ifs.seekg(0, ifs.beg);
     return size;
 }
+
+void toLower(string& src) {
+    for (int i = 0; i < src.size(); i++) {
+        char& c = src.at(i);
+        if ('A' <= c && c <= 'Z') {
+            c = c + 32;
+        }
+    }
+}
