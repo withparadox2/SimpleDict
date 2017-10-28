@@ -107,7 +107,7 @@ public class WordDetailActivity extends BaseActivity {
           String dictId = NativeLib.getDictId(word.ref);
           final StringBuilder detail = new StringBuilder();
           detail.append("<div class='word-item'>");
-          detail.append("<div class='dict-title'>").append(dictName).append("</div>");
+          detail.append("<div class='title-area'><div class='dict-title'>").append(dictName).append("</div><div class='arrow-down'></div></div>");
 
           detail.append("<div class='word-detail'>")
               .append(formatContent(NativeLib.getContent(word.ref), dictId, word))

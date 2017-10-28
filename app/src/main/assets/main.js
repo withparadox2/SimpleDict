@@ -11,7 +11,7 @@ function setContent(text) {
         var detail = word.childNodes[1];
 
         header.onclick = function() {
-            toggleShow(detail);
+            toggleShow(detail, header);
         }
     });
 }
@@ -48,12 +48,23 @@ function clearBackStack() {
     backStack = [];
 }
 
-function toggleShow(ele) {
+function toggleShow(ele, header) {
+    if (!ele.style) {
+        ele.style = {};
+    }
     var display = ele.style.display;
+    var isHideContent = true;
+
     if (!display || display == 'block') {
         ele.style.display = 'none';
     } else {
+        isHideContent = false;
         ele.style.display = 'block';
+    }
+
+    var arrowNode = header.childNodes[1];
+    if (arrowNode) {
+        arrowNode.className = isHideContent ? 'arrow-right' : 'arrow-down';
     }
 }
 

@@ -3,11 +3,32 @@ html, body, #top-container {
   padding: 0;
 }
 
-.dict-title {
+.title-area {
   background:#f2f2f2;
   padding: 10px;
+  display: flex;
+  align-items: center;
 }
 
+.dict-title {
+	flex: 1;
+}
+
+.arrow-right {
+	width: 0; 
+  height: 0; 
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid #bbbbbb;
+}
+
+.arrow-down {
+	width: 0; 
+  height: 0; 
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+  border-top: 6px solid #bbbbbb;
+}
 .word-detail {
   padding: 8px;
 }
