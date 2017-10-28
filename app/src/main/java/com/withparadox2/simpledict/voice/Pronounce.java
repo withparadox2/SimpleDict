@@ -25,7 +25,7 @@ public class Pronounce {
     this.isCancel = true;
   }
 
-  public void justDoIt() {
+  public void speak() {
     if (isCancel) {
       return;
     }

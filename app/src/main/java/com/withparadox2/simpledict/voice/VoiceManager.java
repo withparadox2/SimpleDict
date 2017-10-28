@@ -21,7 +21,7 @@ public class VoiceManager {
     File file = FileUtil.fromAppPath("voice/" + word);
     Pronounce p = new Pronounce(word, file);
     if (file.exists()) {
-      p.justDoIt();
+      p.speak();
     } else {
       download(p);
     }
@@ -50,7 +50,7 @@ public class VoiceManager {
             FileUtil.closeQuitely(ifs);
             FileUtil.closeQuitely(ofs);
 
-            p.justDoIt();
+            p.speak();
           }
         } catch (IOException e) {
           e.printStackTrace();
