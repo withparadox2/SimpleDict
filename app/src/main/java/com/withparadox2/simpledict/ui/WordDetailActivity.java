@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -15,6 +17,8 @@ import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.dict.Word;
 import com.withparadox2.simpledict.util.Util;
+import com.withparadox2.simpledict.voice.Pronounce;
+import com.withparadox2.simpledict.voice.VoiceManager;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,6 +45,7 @@ public class WordDetailActivity extends BaseActivity {
   private boolean mIsWvLoadFinish = false;
   private Runnable mLoadFinishAction;
   private List<List<SearchItem>> mBackStack;
+  protected Pronounce mPrePronounce;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -271,5 +276,29 @@ public class WordDetailActivity extends BaseActivity {
 
   private void execScript(String jsCode) {
     webView.loadUrl("javascript:" + jsCode);
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.detail, menu);
+    return true;
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_speak:
+        speak();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+
+  protected void speak() {
+    if (mCurItem != null) {
+      if (mPrePronounce != null) {
+        mPrePronounce.cancel();
+      }
+      mPrePronounce = VoiceManager.speak(mCurItem.text);
+    }
   }
 }

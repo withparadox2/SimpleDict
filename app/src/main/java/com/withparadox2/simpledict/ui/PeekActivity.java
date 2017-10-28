@@ -44,6 +44,11 @@ public class PeekActivity extends WordDetailActivity {
       @Override public void onNothingSelected(AdapterView<?> parent) {
       }
     });
+    findViewById(R.id.btn_speak).setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        speak();
+      }
+    });
   }
 
   @Override protected int getContentViewId() {

@@ -2,4 +2,5 @@
   <string name="app_name">SimpleDict</string>
   <string name="setting_title">Settings</string>
   <string name="install">install</string>
+  <string name="pronounce">pronounce</string>
 </resources>
