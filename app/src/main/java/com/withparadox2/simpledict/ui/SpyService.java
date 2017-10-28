@@ -32,21 +32,28 @@ public class SpyService extends Service {
           final ClipData clipdata = clipboard.getPrimaryClip();
           if (clipdata.getItemCount() > 0) {
             String text = clipdata.getItemAt(0).getText().toString();
-            text = Util.cleanWord(text);
-            List<SearchItem> wordList = NativeLib.search(text);
-            if (wordList.size() == 0) {
-              text = Util.getRealWord(text);
-              wordList = NativeLib.search(text);
-            }
-            if (wordList.size() > 0) {
-              Intent intent = PeekActivity.getIntent(SpyService.this, wordList);
-              intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-              intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-              startActivity(intent);
-            }
+            searchAggressive(Util.cleanWord(text));
           }
         }
       };
+
+  private void searchAggressive(String text) {
+    List<SearchItem> wordList = NativeLib.search(text);
+    if (wordList.size() == 0) {
+      text = Util.getRealWord(text);
+      wordList = NativeLib.search(text);
+    }
+    while (wordList.size() == 0 && text.length() != 0) {
+      text = text.substring(0, text.length() - 1);
+      wordList = NativeLib.search(text);
+    }
+    if (wordList.size() > 0) {
+      Intent intent = PeekActivity.getIntent(SpyService.this, wordList);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+      startActivity(intent);
+    }
+  }
 
   @Nullable @Override public IBinder onBind(Intent intent) {
     return null;
