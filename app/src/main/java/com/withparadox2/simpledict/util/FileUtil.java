@@ -21,7 +21,7 @@ public class FileUtil {
         return fromPath(DICT_DIR + "/" + path);
     }
 
-    public static void closeQuitely(Closeable c) {
+    public static void closeQuietly(Closeable c) {
         if (c != null) {
             try {
                 c.close();
