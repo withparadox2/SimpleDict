@@ -65,6 +65,8 @@ public class Util {
   public static String getRealWord(String word) {
     if (word.endsWith("ing")) {
       return word.replaceAll("ing$", "");
+    } else if (word.endsWith("'s")) {
+      return word.substring(0, word.length() - 2);
     } else if (word.endsWith("ies")) {
       return word.replaceAll("ies$", "y");
     } else if (word.endsWith("es")) {
@@ -80,8 +82,6 @@ public class Util {
       } else {
         return word.substring(0, len - 2);
       }
-    } else if (word.endsWith("'s")) {
-      return word.substring(0, word.length() - 2);
     }
     return word;
   }
