@@ -49,15 +49,9 @@ u4 fromChars(char* ptr, int pos) {
     u4 result = 0;
     ptr += pos;
     for (int i = 0; i < 4; i++) {
-        result |= ((u4)(u1)*(ptr + i)) << 8 * i;
+        result |= static_cast<u4>(static_cast<u1>(*(ptr + i))) << 8 * i;
     }
     return result;
-}
-
-char* getChars(int len) {
-    char* chars = new char[len + 1];
-    *(chars + len) = 0;
-    return chars;
 }
 
 int getStreamSize(ifstream& ifs) {

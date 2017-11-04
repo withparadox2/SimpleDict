@@ -29,20 +29,16 @@ void write1(ofstream& output, int val);
 void write2(ofstream& output, int val);
 void write4(ofstream& output, int val);
 
-char* getChars(int len);
-
-template<typename T> 
+template<typename T>
 T readNum(ifstream& input, int len) {
-    char* cs = getChars(len);    
-    input.read(cs, len);
+    char buffer[len];
+    input.read(buffer, len);
     T result = 0;
     for (int i = 0; i < len; i++) {
-        result |= ((T)(u1)*(cs + i)) << 8 * i;
+        result |= static_cast<T>(static_cast<u1>(buffer[i])) << 8 * i;
     }
-    delete[] cs;
     return result;
 }
-
 
 template<typename T>
 T readNum(ifstream& input, int offset, int len) {
