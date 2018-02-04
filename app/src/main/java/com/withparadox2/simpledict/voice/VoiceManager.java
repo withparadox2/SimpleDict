@@ -47,8 +47,8 @@ public class VoiceManager {
               ofs.write(buffer, 0, len);
             }
 
-            FileUtil.closeQuitely(ifs);
-            FileUtil.closeQuitely(ofs);
+            FileUtil.closeQuietly(ifs);
+            FileUtil.closeQuietly(ofs);
 
             p.speak();
           }
