@@ -13,7 +13,7 @@
             android:paddingRight="10dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/input_word"/>
+            android:hint="@string/hint_home_search"/>
     </LinearLayout>
 
     <ListView

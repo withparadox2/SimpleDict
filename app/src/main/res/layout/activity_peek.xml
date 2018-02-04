@@ -27,9 +27,22 @@
         android:layout_width="60dp"
         android:layout_height="40dp"/>
   </LinearLayout>
-  <WebView
-      android:id="@+id/web_view"
+  <com.withparadox2.simpledict.support.view.StepDetectLayout
+      android:id="@+id/layout_word_detail"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
-  </WebView>
+
+    <WebView
+        android:id="@+id/web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </WebView>
+    <com.withparadox2.simpledict.support.view.VoiceFireView
+        android:layout_gravity="top|right"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"
+        android:id="@+id/voice_fire_view"
+        android:layout_width="30dp"
+        android:layout_height="100dp"/>
+  </com.withparadox2.simpledict.support.view.StepDetectLayout>
 </LinearLayout>

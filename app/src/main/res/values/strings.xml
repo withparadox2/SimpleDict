@@ -3,5 +3,5 @@
   <string name="setting_title">Settings</string>
   <string name="install">install</string>
   <string name="pronounce">pronounce</string>
-  <string name="input_word">hint_home_search</string>
+  <string name="hint_home_search">input word</string>
 </resources>
