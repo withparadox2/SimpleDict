@@ -56,7 +56,7 @@ public class HomeActivity extends BaseActivity {
       }
 
       @Override public void afterTextChanged(Editable editable) {
-        //Fast to clear edit_text with typing two spaces
+        //Fast to clear edit_text by typing two spaces
         int len = editable.length();
         if (len > 1) {
           if (editable.charAt(len - 1) == ' ' && editable.charAt(len - 2) == ' ') {

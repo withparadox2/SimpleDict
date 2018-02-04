@@ -17,6 +17,8 @@ import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.dict.Word;
+import com.withparadox2.simpledict.support.view.StepDetectLayout;
+import com.withparadox2.simpledict.support.view.VoiceFireView;
 import com.withparadox2.simpledict.util.Util;
 import com.withparadox2.simpledict.voice.Pronounce;
 import com.withparadox2.simpledict.voice.VoiceManager;
@@ -62,6 +64,7 @@ public class WordDetailActivity extends BaseActivity {
     webView.addJavascriptInterface(new JSInterface(), "jsi");
     webView.loadUrl("file:///android_asset/main.html");
     updateIntent();
+    setUpSpeakerDetect();
   }
 
   private void initExecutor(int dictCount) {
@@ -305,5 +308,24 @@ public class WordDetailActivity extends BaseActivity {
       }
       mPrePronounce = VoiceManager.speak(mCurItem.text);
     }
+  }
+
+  public void setUpSpeakerDetect() {
+    StepDetectLayout layout = (StepDetectLayout) findViewById(R.id.layout_word_detail);
+    if (layout == null) {
+      return;
+    }
+
+    VoiceFireView view = (VoiceFireView) findViewById(R.id.voice_fire_view);
+    if (view == null) {
+      return;
+    }
+
+    layout.setCallback(view.getCallback());
+    view.setFireCallback(new VoiceFireView.FireCallback() {
+      @Override public void onFinalFire() {
+        speak();
+      }
+    });
   }
 }

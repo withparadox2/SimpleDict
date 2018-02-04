@@ -12,7 +12,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:hint="@string/input_word"/>
     </LinearLayout>
 
     <ListView

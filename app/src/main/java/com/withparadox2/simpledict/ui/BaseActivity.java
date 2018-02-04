@@ -28,7 +28,7 @@ public class BaseActivity extends AppCompatActivity {
     }
   }
 
-  public boolean showBackButton() {
+  public boolean showBackButton()  {
     return true;
   }
 

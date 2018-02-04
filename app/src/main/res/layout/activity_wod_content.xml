@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<com.withparadox2.simpledict.support.view.StepDetectLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_word_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
   <WebView
       android:id="@+id/web_view"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
   </WebView>
-</LinearLayout>
+  <com.withparadox2.simpledict.support.view.VoiceFireView
+      android:layout_gravity="top|right"
+      android:layout_marginTop="30dp"
+      android:layout_marginRight="30dp"
+      android:id="@+id/voice_fire_view"
+      android:layout_width="30dp"
+      android:layout_height="100dp"/>
+</com.withparadox2.simpledict.support.view.StepDetectLayout>
+
