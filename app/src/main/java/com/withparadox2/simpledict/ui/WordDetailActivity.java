@@ -1,5 +1,6 @@
 package com.withparadox2.simpledict.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -47,7 +48,7 @@ public class WordDetailActivity extends BaseActivity {
   private List<List<SearchItem>> mBackStack;
   protected Pronounce mPrePronounce;
 
-  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+  @SuppressLint("AddJavascriptInterface") @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(getContentViewId());
     webView = (WebView) findViewById(R.id.web_view);
@@ -123,7 +124,7 @@ public class WordDetailActivity extends BaseActivity {
                 sb.append(result);
               }
               sb.append("</div>");
-              WordDetailActivity.this.runOnUiThread(new Runnable() {
+              Util.post(new Runnable() {
                 @Override public void run() {
                   Runnable render = new Runnable() {
                     @Override public void run() {
@@ -234,6 +235,10 @@ public class WordDetailActivity extends BaseActivity {
           WordDetailActivity.this.onClickWord(Util.cleanWord(text));
         }
       });
+    }
+
+    @JavascriptInterface public void toast(String text) {
+      Util.toast(text);
     }
   }
 

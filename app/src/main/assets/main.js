@@ -191,13 +191,22 @@ function handleWordClick(event) {
     }
     var word = getWordAtPoint(event.target, event.x, event.y);
     if (word) {
-        if (window.jsi && window.jsi.onClickWord) {
-            window.jsi.onClickWord(word);
-        } else {
-            alert(word);
-        }
+        nativeClickWord(word);
     }
 }
+
+function nativeToast(str) {
+    if (window.jsi && window.jsi.toast) {
+        window.jsi.toast(str);
+    }
+}
+
+function nativeClickWord(word) {
+    if (window.jsi && window.jsi.onClickWord) {
+        window.jsi.onClickWord(word);
+    }
+}
+
 
 //Steal from golden dict
 window.addEventListener('click', handleWordClick, false);

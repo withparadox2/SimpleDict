@@ -10,6 +10,10 @@ html, body, #top-container {
   align-items: center;
 }
 
+.word-item {
+  border-bottom: 1px #ccc solid;
+}
+
 .dict-title {
 	flex: 1;
 }
@@ -29,6 +33,7 @@ html, body, #top-container {
   border-left: 6px solid transparent;
   border-top: 6px solid #bbbbbb;
 }
+
 .word-detail {
   padding: 8px;
 }
