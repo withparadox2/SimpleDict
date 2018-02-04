@@ -49,14 +49,15 @@ public class StepDetectLayout extends FrameLayout {
 
   @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
     switch (ev.getAction()) {
-      case MotionEvent.ACTION_DOWN:
+      case MotionEvent.ACTION_DOWN: {
         mDownX = ev.getX();
         mDownY = ev.getY();
         mAbortDetect = false;
         mCounting = false;
         mLastStep = -1;
         break;
-      case MotionEvent.ACTION_MOVE:
+      }
+      case MotionEvent.ACTION_MOVE: {
         if (mAbortDetect) {
           break;
         }
@@ -68,19 +69,18 @@ public class StepDetectLayout extends FrameLayout {
         if (xMoveVal > mStepSize) {
           if (yMoveVal > mTouchSlop && !mCounting) {
             mAbortDetect = true;
-            break;
           } else {
             boolean isNewFire = !mCounting;
             mCounting = true;
             int step = (int) (Math.abs(x - mDownX) / mStepSize);
-            if (step == mLastStep) {
-              break;
+            if (step != mLastStep) {
+              mLastStep = step;
+              fireStep(step, isNewFire);
             }
-            mLastStep = step;
-            fireStep(step, isNewFire);
           }
         }
         break;
+      }
       case MotionEvent.ACTION_CANCEL:
       case MotionEvent.ACTION_UP:
         if (mCounting) {
@@ -91,6 +91,8 @@ public class StepDetectLayout extends FrameLayout {
     return super.onInterceptTouchEvent(ev);
   }
 
+  // step: Starts from 1
+  // newFire: Indicates callee to reset state
   private void fireStep(int step, boolean newFire) {
     if (mCallback != null) {
       mCallback.onStepFire(step, newFire);
@@ -104,8 +106,8 @@ public class StepDetectLayout extends FrameLayout {
   }
 
   public interface Callback {
-    public void onStepFire(int step, boolean newFire);
+    void onStepFire(int step, boolean newFire);
 
-    public void onCancel();
+    void onCancel();
   }
 }

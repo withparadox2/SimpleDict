@@ -16,12 +16,11 @@ import com.withparadox2.simpledict.util.Util;
 
 public class VoiceFireView extends View {
   private static final int MAX_STEP_COUNT = 4;
-  private int mBaseColor = Color.RED;
+  private int mColor = Color.RED;
   private int mCurrentStep = 0;
   private Paint mPaint;
   private RectF mRect;
   private boolean mIsCancel;
-  private boolean mHasAnim;
 
   // < 0 end of anim
   // 0   start  anim
@@ -98,8 +97,8 @@ public class VoiceFireView extends View {
       if (i == MAX_STEP_COUNT - 1) {
         top = 0;
       }
-      mPaint.setColor(mBaseColor);
-      mPaint.setAlpha(80 + 170 / MAX_STEP_COUNT * i);
+      int alpha = 80 + 170 / MAX_STEP_COUNT * i;
+      mPaint.setColor((mColor & 0x00ffffff) | alpha << 24);
 
       int halfDiffWidth = (getWidth() - drawWidth) / 2;
       int halfDiffHeight = (itemHeight - drawHeight) / 2;
@@ -117,7 +116,7 @@ public class VoiceFireView extends View {
       @Override public void onStepFire(int step, boolean newFire) {
         if (newFire) {
           mIsCancel = false;
-          mBaseColor = randomColor();
+          mColor = randomColor();
           stopAnim();
         }
         mCurrentStep = step;
@@ -151,7 +150,7 @@ public class VoiceFireView extends View {
   }
 
   public interface FireCallback {
-    public void onFinalFire();
+    void onFinalFire();
   }
 
   private FireCallback mCallback;
