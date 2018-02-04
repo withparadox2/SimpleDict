@@ -6,6 +6,8 @@ import com.withparadox2.simpledict.DictApp;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by withparadox2 on 2017/8/27.
@@ -102,5 +104,9 @@ public class Util {
       e.printStackTrace();
     }
     return fileName;
+  }
+
+  public static boolean isEmpty(Collection<?> collection) {
+    return collection == null || collection.size() == 0;
   }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -27,7 +28,9 @@ import java.util.List;
  */
 
 public class HomeActivity extends BaseActivity {
-  private List<SearchItem> wordList;
+  private List<SearchItem> mWordList;
+  private BaseAdapter mAdapter;
+  private EditText etSearch;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -39,18 +42,17 @@ public class HomeActivity extends BaseActivity {
     });
 
     ListView lv = (ListView) findViewById(R.id.list_view);
-    final BaseAdapter adapter = new WordListAdapter();
-    lv.setAdapter(adapter);
+    mAdapter = new WordListAdapter();
+    lv.setAdapter(mAdapter);
 
-    EditText editText = (EditText) findViewById(R.id.et_search);
-    editText.addTextChangedListener(new TextWatcher() {
+    etSearch = (EditText) findViewById(R.id.et_search);
+    etSearch.addTextChangedListener(new TextWatcher() {
       @Override public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
       }
 
       @Override public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        wordList = NativeLib.search(charSequence.toString());
-        adapter.notifyDataSetChanged();
+        doSearch(charSequence.toString());
       }
 
       @Override public void afterTextChanged(Editable editable) {
@@ -72,14 +74,22 @@ public class HomeActivity extends BaseActivity {
     });
   }
 
+  private void doSearch(String word) {
+    if (TextUtils.isEmpty(word)) {
+      return;
+    }
+    mWordList = NativeLib.search(word);
+    mAdapter.notifyDataSetChanged();
+  }
+
   private class WordListAdapter extends BaseAdapter {
 
     @Override public int getCount() {
-      return wordList == null ? 0 : wordList.size();
+      return mWordList == null ? 0 : mWordList.size();
     }
 
     @Override public SearchItem getItem(int i) {
-      return wordList.get(i);
+      return mWordList.get(i);
     }
 
     @Override public long getItemId(int i) {
@@ -124,5 +134,13 @@ public class HomeActivity extends BaseActivity {
       return true;
     }
     return super.onKeyDown(keyCode, event);
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    if (Util.isEmpty(mWordList)) {
+      String word = etSearch.getText().toString();
+      doSearch(word);
+    }
   }
 }
