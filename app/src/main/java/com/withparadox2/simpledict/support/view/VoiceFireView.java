@@ -51,19 +51,19 @@ public class VoiceFireView extends View {
     int gap = Util.dp2px(getContext(), 3);
     int radius = Util.dp2px(getContext(), 3);
 
-    if (mAnimFrameCount >= 0) {
-      mAnimFrameCount++;
-    }
-
-    int itemHeight = (getHeight() - gap * MAX_STEP_COUNT + gap)/ MAX_STEP_COUNT;
+    int itemHeight = (getHeight() - gap * MAX_STEP_COUNT + gap) / MAX_STEP_COUNT;
 
     int drawHeight = itemHeight;
     int drawWidth = getWidth();
 
     //during anim
-    if (mIsCancel) {
+    if (mAnimFrameCount >= 0) {
+      mAnimFrameCount++;
+
       int minSize = Math.min(drawHeight, drawWidth);
-      float rate = mAnimFrameCount / 15f;
+      final int firstStageFrameCount = 15;
+      final int secondStageFrameCount = 30;
+      float rate = mAnimFrameCount / (float) firstStageFrameCount;
 
       if (rate < 1) {
         //stage 1
@@ -77,7 +77,7 @@ public class VoiceFireView extends View {
       } else {
         //stage 2
 
-        rate = (mAnimFrameCount - 15) / 30f;
+        rate = (mAnimFrameCount - firstStageFrameCount) / (float) secondStageFrameCount;
         radius = (int) (minSize / 2 * (1 - rate));
 
         drawWidth = drawHeight = (int) (minSize * (1 - rate));
@@ -103,7 +103,8 @@ public class VoiceFireView extends View {
       int halfDiffWidth = (getWidth() - drawWidth) / 2;
       int halfDiffHeight = (itemHeight - drawHeight) / 2;
 
-      mRect.set(halfDiffWidth, top + halfDiffHeight, getWidth() - halfDiffWidth, bottom - halfDiffHeight);
+      mRect.set(halfDiffWidth, top + halfDiffHeight, getWidth() - halfDiffWidth,
+          bottom - halfDiffHeight);
       canvas.drawRoundRect(mRect, radius, radius, mPaint);
     }
     if (mAnimFrameCount > 0) {
@@ -154,6 +155,7 @@ public class VoiceFireView extends View {
   }
 
   private FireCallback mCallback;
+
   public void setFireCallback(FireCallback callback) {
     this.mCallback = callback;
   }
