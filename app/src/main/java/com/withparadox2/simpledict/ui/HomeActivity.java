@@ -21,6 +21,7 @@ import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.DictManager;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.util.Util;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,9 +77,10 @@ public class HomeActivity extends BaseActivity {
 
   private void doSearch(String word) {
     if (TextUtils.isEmpty(word)) {
-      return;
+      mWordList = new ArrayList<>();
+    } else {
+      mWordList = NativeLib.search(word);
     }
-    mWordList = NativeLib.search(word);
     mAdapter.notifyDataSetChanged();
   }
 
