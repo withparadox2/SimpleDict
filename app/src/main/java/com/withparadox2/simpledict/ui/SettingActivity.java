@@ -29,6 +29,7 @@ public class SettingActivity extends BaseActivity {
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_setting);
+    makeActionBarTransparent();
     ListView listView = (ListView) findViewById(R.id.list_view);
     mAdapter = new DictAdapter();
     listView.setAdapter(mAdapter);
@@ -136,5 +137,9 @@ public class SettingActivity extends BaseActivity {
     DictWrapper(Dict dict) {
       this.dict = dict;
     }
+  }
+
+  @Override public boolean isFullScreen() {
+    return true;
   }
 }

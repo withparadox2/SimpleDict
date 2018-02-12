@@ -50,13 +50,13 @@ public class WordDetailActivity extends BaseActivity {
   private List<List<SearchItem>> mBackStack;
   protected Pronounce mPrePronounce;
 
-  @SuppressLint("AddJavascriptInterface") @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+  @SuppressLint({"AddJavascriptInterface", "SetJavaScriptEnabled"})
+  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    makeActionBarTransparent();
     setContentView(getContentViewId());
     webView = (WebView) findViewById(R.id.web_view);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      WebView.setWebContentsDebuggingEnabled(true);
-    }
+    WebView.setWebContentsDebuggingEnabled(true);
     webView.getSettings().setAllowFileAccess(true);
     webView.getSettings().setJavaScriptEnabled(true);
     webView.setWebViewClient(new MyClient());
@@ -66,6 +66,7 @@ public class WordDetailActivity extends BaseActivity {
     updateIntent();
     setUpSpeakerDetect();
   }
+
 
   private void initExecutor(int dictCount) {
     int threadCount = Math.min(dictCount, 4);
@@ -327,5 +328,9 @@ public class WordDetailActivity extends BaseActivity {
         speak();
       }
     });
+  }
+
+  @Override public boolean isFullScreen() {
+    return true;
   }
 }

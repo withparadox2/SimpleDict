@@ -23,6 +23,7 @@
       </intent-filter>
     </activity>
     <activity
+        android:theme="@style/WithActionBar"
         android:name=".ui.WordDetailActivity"
         android:screenOrientation="portrait"/>
     <activity
@@ -32,6 +33,7 @@
         android:launchMode="singleInstance"
         android:screenOrientation="portrait"/>
     <activity
+        android:theme="@style/WithActionBar"
         android:name=".ui.SettingActivity"
         android:label="@string/setting_title"
         android:screenOrientation="portrait"/>

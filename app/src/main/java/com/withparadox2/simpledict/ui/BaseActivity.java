@@ -1,5 +1,7 @@
 package com.withparadox2.simpledict.ui;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -48,5 +50,13 @@ public class BaseActivity extends AppCompatActivity {
 
   public boolean isFullScreen() {
     return false;
+  }
+
+
+  public void makeActionBarTransparent() {
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+      getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
   }
 }

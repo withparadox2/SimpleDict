@@ -99,4 +99,8 @@ public class PeekActivity extends WordDetailActivity {
     mShowItemList.addAll(mItemList);
     mAdapter.notifyDataSetChanged();
   }
+
+  @Override public boolean isFullScreen() {
+    return false;
+  }
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.withparadox2.simpledict.support.view.StepDetectLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/bg_gradient"
+    android:fitsSystemWindows="true"
     android:id="@+id/layout_word_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
