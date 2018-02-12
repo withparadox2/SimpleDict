@@ -2,22 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
-    <LinearLayout
+    <FrameLayout
+        android:layout_margin="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
-            android:layout_weight="1"
             android:id="@+id/et_search"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/colorCursor"
+            android:background="@drawable/bg_edittext"
+            android:textSize="15sp"
+            android:textCursorDrawable="@drawable/cursor"
             android:hint="@string/hint_home_search"/>
-    </LinearLayout>
+        <ImageButton
+          android:id="@+id/btn_menu"
+          android:layout_gravity="right|center_vertical"
+          android:src="@drawable/ic_menu"
+          android:background="?android:attr/selectableItemBackgroundBorderless"
+          android:layout_width="40dp"
+          android:layout_height="40dp"/>
+    </FrameLayout>
 
     <ListView
         android:id="@+id/list_view"
+        android:divider="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ListView>

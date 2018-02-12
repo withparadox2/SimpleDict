@@ -1,6 +1,7 @@
 package com.withparadox2.simpledict.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -73,6 +74,12 @@ public class HomeActivity extends BaseActivity {
         startActivity(WordDetailActivity.getIntent(HomeActivity.this, searchItem));
       }
     });
+
+    findViewById(R.id.btn_menu).setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        startActivity(new Intent(HomeActivity.this, SettingActivity.class));
+      }
+    });
   }
 
   private void doSearch(String word) {
@@ -104,6 +111,7 @@ public class HomeActivity extends BaseActivity {
         int padding = Util.dp2px(HomeActivity.this, 13);
         view.setPadding(padding, padding, padding, padding);
         ((TextView) view).setTextSize(16);
+        ((TextView) view).setTextColor(Color.WHITE);
       }
       TextView tv = (TextView) view;
       tv.setText(getItem(i).text);
@@ -114,6 +122,10 @@ public class HomeActivity extends BaseActivity {
 
   @Override public boolean showBackButton() {
     return false;
+  }
+
+  @Override public boolean isFullScreen() {
+    return true;
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
