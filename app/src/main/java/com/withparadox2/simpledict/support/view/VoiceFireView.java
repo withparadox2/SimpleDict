@@ -16,6 +16,11 @@ import com.withparadox2.simpledict.util.Util;
 
 public class VoiceFireView extends View {
   private static final int MAX_STEP_COUNT = 4;
+
+  private static final int STAGE_FIRST_DURATION = 300;
+  private static final int STAGE_SECOND_DURATION = 500;
+
+
   private int mColor = Color.RED;
   private int mCurrentStep = 0;
   private Paint mPaint;
@@ -25,7 +30,7 @@ public class VoiceFireView extends View {
   // < 0 end of anim
   // 0   start  anim
   // > 0 during anim
-  private int mAnimFrameCount = 0;
+  private long mAnimTime = 0;
 
   public VoiceFireView(Context context) {
     super(context);
@@ -40,7 +45,7 @@ public class VoiceFireView extends View {
   }
 
   @Override protected void onDraw(Canvas canvas) {
-    if (mIsCancel && mAnimFrameCount < 0) {
+    if (mIsCancel && mAnimTime < 0) {
       return;
     }
 
@@ -57,13 +62,13 @@ public class VoiceFireView extends View {
     int drawWidth = getWidth();
 
     //during anim
-    if (mAnimFrameCount >= 0) {
-      mAnimFrameCount++;
+    if (mAnimTime >= 0) {
+
+      long elapseTime = System.currentTimeMillis() - mAnimTime;
 
       int minSize = Math.min(drawHeight, drawWidth);
-      final int firstStageFrameCount = 15;
-      final int secondStageFrameCount = 30;
-      float rate = mAnimFrameCount / (float) firstStageFrameCount;
+
+      float rate = elapseTime / (float) STAGE_FIRST_DURATION;
 
       if (rate < 1) {
         //stage 1
@@ -77,7 +82,7 @@ public class VoiceFireView extends View {
       } else {
         //stage 2
 
-        rate = (mAnimFrameCount - firstStageFrameCount) / (float) secondStageFrameCount;
+        rate = (elapseTime - STAGE_FIRST_DURATION) / (float) STAGE_SECOND_DURATION;
         radius = (int) (minSize / 2 * (1 - rate));
 
         drawWidth = drawHeight = (int) (minSize * (1 - rate));
@@ -107,7 +112,7 @@ public class VoiceFireView extends View {
           bottom - halfDiffHeight);
       canvas.drawRoundRect(mRect, radius, radius, mPaint);
     }
-    if (mAnimFrameCount > 0) {
+    if (mAnimTime > 0) {
       invalidate();
     }
   }
@@ -136,12 +141,12 @@ public class VoiceFireView extends View {
   }
 
   private void startAnim() {
-    mAnimFrameCount = 0;
+    mAnimTime = System.currentTimeMillis();
     invalidate();
   }
 
   private void stopAnim() {
-    mAnimFrameCount = -1;
+    mAnimTime = -1;
     mCurrentStep = 0;
   }
 
