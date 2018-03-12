@@ -2,6 +2,7 @@ package com.withparadox2.simpledict.voice;
 
 import android.media.AudioManager;
 import android.media.SoundPool;
+import com.withparadox2.simpledict.util.Util;
 import java.io.File;
 
 /**
@@ -33,9 +34,13 @@ public class Pronounce {
       return;
     }
 
-    int id = sSP.load(mp3File.getAbsolutePath(), 1);
-    sSP.play(id, 1, 1, 1, 0, 1);
-    sSP.unload(id);
+    final int id = sSP.load(mp3File.getAbsolutePath(), 1);
+    sSP.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+      @Override public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+        sSP.play(id, 1, 1, 1, 0, 1);
+        sSP.unload(id);
+      }
+    });
   }
 
   public String getWord() {
