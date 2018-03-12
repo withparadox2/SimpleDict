@@ -3,7 +3,7 @@
     android:insetBottom="0dp"
     android:insetLeft="@dimen/peek_dialog_padding"
     android:insetRight="@dimen/peek_dialog_padding"
-    android:insetTop="0dp">
+    android:insetTop="@dimen/peek_dialog_padding">
   <shape android:shape="rectangle">
     <corners android:radius="2dp"/>
     <solid android:color="@android:color/transparent"/>
