@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.SearchItem;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 
 public class SpyService extends Service {
+  private SearchTask mLastTask;
   private ClipboardManager.OnPrimaryClipChangedListener mPrimaryChangeListener =
       new ClipboardManager.OnPrimaryClipChangedListener() {
         @Override public void onPrimaryClipChanged() {
@@ -33,7 +35,10 @@ public class SpyService extends Service {
           if (clipdata.getItemCount() > 0) {
             if (clipdata.getItemAt(0).getText() != null) {
               String text = clipdata.getItemAt(0).getText().toString();
-              searchAggressive(Util.cleanWord(text));
+              if (mLastTask == null || mLastTask.isDone() || !mLastTask.isSame(text)) {
+                mLastTask = new SearchTask(text);
+                Util.postDelayed(mLastTask, 10);
+              }
             }
           }
         }
@@ -84,5 +89,29 @@ public class SpyService extends Service {
   private Bitmap getIconBitmap() {
     Drawable drawable = getResources().getDrawable(R.drawable.ic_launcher);
     return ((BitmapDrawable) (drawable)).getBitmap();
+  }
+
+  private class SearchTask implements Runnable {
+    private String mWord;
+    private boolean mDone = false;
+
+    boolean isSame(String other) {
+      return TextUtils.equals(other, mWord);
+    }
+
+    boolean isDone() {
+      return mDone;
+    }
+
+    SearchTask(String word) {
+      mWord = word;
+    }
+
+    @Override public void run() {
+      if (mWord != null) {
+        searchAggressive(Util.cleanWord(mWord));
+      }
+      mDone = true;
+    }
   }
 }
