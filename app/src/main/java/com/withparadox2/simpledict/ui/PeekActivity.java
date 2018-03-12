@@ -2,7 +2,10 @@ package com.withparadox2.simpledict.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +24,14 @@ import java.util.List;
  */
 
 public class PeekActivity extends WordDetailActivity {
-  private Spinner spinner;
   private ArrayAdapter<SearchItem> mAdapter;
   protected List<SearchItem> mShowItemList = new ArrayList<>();
 
   @Override public void setContentView(@LayoutRes int layoutResID) {
     configWindowSize();
     super.setContentView(layoutResID);
-    configDecorViewSize();
-    spinner = (Spinner) findViewById(R.id.spinner);
+    setSwipeBackEnable(false);
+    Spinner spinner = (Spinner) findViewById(R.id.spinner);
     mAdapter = new ArrayAdapter<>(this, R.layout.item_peek_spinner, mShowItemList);
     mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinner.setAdapter(mAdapter);
@@ -72,11 +74,9 @@ public class PeekActivity extends WordDetailActivity {
     getWindow().setAttributes(lp);
   }
 
-  private void configDecorViewSize() {
-    ViewGroup.LayoutParams lp = findViewById(android.R.id.content).getLayoutParams();
-    int padding = getResources().getDimensionPixelOffset(R.dimen.peek_dialog_padding);
-    lp.width = getDialogWidth() - 2 * padding;
-    lp.height = getDialogHeight();
+  @Override public void onPostCreate(@Nullable Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    getWindow().setBackgroundDrawableResource(R.drawable.bg_peek_dialog);
   }
 
   private int getDialogWidth() {
