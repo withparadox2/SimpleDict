@@ -4,15 +4,16 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 /**
  * Created by withparadox2 on 2017/10/1.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends SwipeBackActivity {
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

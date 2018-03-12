@@ -37,6 +37,7 @@ public class HomeActivity extends BaseActivity {
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
+    setSwipeBackEnable(false);
     DictManager.installAndPrepareAll(new Runnable() {
       @Override public void run() {
         startService(new Intent(HomeActivity.this, SpyService.class));
