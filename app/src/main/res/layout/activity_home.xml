@@ -19,6 +19,7 @@
             android:background="@drawable/bg_edittext"
             android:textSize="15sp"
             android:textCursorDrawable="@drawable/cursor"
+            android:singleLine="true"
             android:hint="@string/hint_home_search"/>
         <ImageButton
           android:id="@+id/btn_menu"

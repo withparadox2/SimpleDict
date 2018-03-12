@@ -25,10 +25,16 @@ public class Util {
   }
 
   public static void post(Runnable action) {
+    if (action == null) {
+      return;
+    }
     DictApp.getInstance().getHandler().post(action);
   }
 
   public static void postDelayed(Runnable action, long delayMillis) {
+    if (action == null) {
+      return;
+    }
     DictApp.getInstance().getHandler().postDelayed(action, delayMillis);
   }
 
