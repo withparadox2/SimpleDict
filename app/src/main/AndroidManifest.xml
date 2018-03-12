@@ -30,8 +30,7 @@
         android:name=".ui.PeekActivity"
         android:theme="@style/DialogTheme"
         android:excludeFromRecents="true"
-        android:launchMode="singleInstance"
-        android:screenOrientation="portrait"/>
+        android:launchMode="singleInstance"/>
     <activity
         android:theme="@style/WithActionBar"
         android:name=".ui.SettingActivity"
