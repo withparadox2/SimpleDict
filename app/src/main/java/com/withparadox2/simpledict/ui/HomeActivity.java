@@ -17,13 +17,19 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.withparadox2.simpledict.NativeLib;
 import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.DictManager;
 import com.withparadox2.simpledict.dict.SearchItem;
+import com.withparadox2.simpledict.support.permission.PermissionManager;
 import com.withparadox2.simpledict.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * Created by withparadox2 on 2017/8/12.
@@ -38,11 +44,16 @@ public class HomeActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
     setSwipeBackEnable(false);
-    DictManager.installAndPrepareAll(new Runnable() {
+
+    PermissionManager.requestPermission(this, new Runnable() {
       @Override public void run() {
-        startService(new Intent(HomeActivity.this, SpyService.class));
+        DictManager.installAndPrepareAll(new Runnable() {
+          @Override public void run() {
+            startService(new Intent(HomeActivity.this, SpyService.class));
+          }
+        });
       }
-    });
+    }, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE);
 
     ListView lv = (ListView) findViewById(R.id.list_view);
     mAdapter = new WordListAdapter();

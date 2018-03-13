@@ -22,6 +22,7 @@ public class StepDetectLayout extends FrameLayout {
   private boolean mCounting;
   private int mLastStep;
 
+
   public StepDetectLayout(@NonNull Context context) {
     super(context);
     init();
