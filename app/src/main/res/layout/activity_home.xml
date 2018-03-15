@@ -30,10 +30,10 @@
           android:layout_height="40dp"/>
     </FrameLayout>
 
-    <ListView
+    <com.withparadox2.simpledict.support.view.HomeListView
         android:id="@+id/list_view"
         android:divider="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </ListView>
+    </com.withparadox2.simpledict.support.view.HomeListView>
 </LinearLayout>

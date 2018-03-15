@@ -1,5 +1,6 @@
 package com.withparadox2.simpledict.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +25,7 @@ import com.withparadox2.simpledict.R;
 import com.withparadox2.simpledict.dict.DictManager;
 import com.withparadox2.simpledict.dict.SearchItem;
 import com.withparadox2.simpledict.support.permission.PermissionManager;
+import com.withparadox2.simpledict.support.view.HomeListView;
 import com.withparadox2.simpledict.util.Util;
 
 import java.util.ArrayList;
@@ -55,7 +58,7 @@ public class HomeActivity extends BaseActivity {
       }
     }, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE);
 
-    ListView lv = (ListView) findViewById(R.id.list_view);
+    HomeListView lv = (HomeListView) findViewById(R.id.list_view);
     mAdapter = new WordListAdapter();
     lv.setAdapter(mAdapter);
 
@@ -79,6 +82,7 @@ public class HomeActivity extends BaseActivity {
         }
       }
     });
+    lv.setEditText(etSearch);
 
     lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
