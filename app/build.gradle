@@ -10,6 +10,9 @@ android {
     versionCode 1
     versionName "1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    ndk {
+      abiFilters 'armeabi-v7a', 'armeabi'
+    }
   }
   buildTypes {
     release {
@@ -17,10 +20,15 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
+  externalNativeBuild {
+    ndkBuild {
+      path "src/main/jni/Android.mk"
+    }
+  }
   sourceSets {
     main {
-      jni.srcDirs = [] //disable automatic ndk-build
-      jniLibs.srcDirs = ['src/main/libs']
+//      jni.srcDirs = [] //disable automatic ndk-build
+//      jniLibs.srcDirs = ['src/main/libs']
     }
   }
 }
