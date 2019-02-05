@@ -10,24 +10,24 @@ import java.io.IOException;
  */
 
 public class FileUtil {
-    public static final String DICT_DIR = "simpledict";
+  public static final String DICT_DIR = "simpledict";
 
-    public static File fromPath(String path) {
-        File extStore = Environment.getExternalStorageDirectory();
-        return new File(extStore.getPath(), path);
-    }
+  public static File fromPath(String path) {
+    File extStore = Environment.getExternalStorageDirectory();
+    return new File(extStore.getPath(), path);
+  }
 
-    public static File fromAppPath(String path) {
-        return fromPath(DICT_DIR + "/" + path);
-    }
+  public static File fromAppPath(String path) {
+    return fromPath(DICT_DIR + "/" + path);
+  }
 
-    public static void closeQuietly(Closeable c) {
-        if (c != null) {
-            try {
-                c.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+  public static void closeQuietly(Closeable c) {
+    if (c != null) {
+      try {
+        c.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
+  }
 }
