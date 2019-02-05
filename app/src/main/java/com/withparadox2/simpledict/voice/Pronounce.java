@@ -2,7 +2,6 @@ package com.withparadox2.simpledict.voice;
 
 import android.media.AudioManager;
 import android.media.SoundPool;
-import com.withparadox2.simpledict.util.Util;
 import java.io.File;
 
 /**
