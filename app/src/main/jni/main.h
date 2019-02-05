@@ -21,7 +21,7 @@ void getSortedDictList(vector<Dict*>& dictList);
 void createFolder(const char* path); 
 
 /**
- * return: 0 install succed; -1 install failed
+ * return: 0 install succeed; -1 install failed
  */
 int install(const char* filePath, bool prepare = false);
 
