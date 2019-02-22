@@ -12,6 +12,7 @@ libs/**/.so
 *.inflated
 *.exe
 *.ld2
+!static/**/*.ld2
 *.swp
 *.un~
 *~
