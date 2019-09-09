@@ -42,13 +42,13 @@ Ld2Extractor::Ld2Extractor(const string ld2Path, const string sdPath)
 int Ld2Extractor::process() {
     ifs.open(ld2Path.c_str(), ifstream::binary);
     if (!ifs.is_open()) {
-        log("can not open file: %s\n", ld2Path.c_str());
+        log_("can not open file: %s\n", ld2Path.c_str());
         return -1;
     }
 
     ofs.open(sdPath.c_str(), ofstream::out | ofstream::binary);
     if (!ofs.is_open()) {
-        log("can not open file: %s\n", sdPath.c_str());
+        log_("can not open file: %s\n", sdPath.c_str());
         return -1;
     }
 
@@ -261,9 +261,9 @@ Dict* SdReader::readSd() {
         }
 
         int type = readu1(ifsSd);
-        log("read type = %d\n", type);
+        log_("read type = %d\n", type);
         int itemCount = readu4(ifsSd);
-        log("item count = %d\n", itemCount);
+        log_("item count = %d\n", itemCount);
 
         for (int i = 0; i < itemCount; i++) {
             int wordLen = readu1(ifsSd);
@@ -296,7 +296,7 @@ Dict* SdReader::readSd() {
                 dict->wordList.push_back(word);
 
                 //string defcontent = readDef(defOffset, defLen, defPartCount, partIndexs, 0x4000);
-                //log("content = %s\n", defcontent.c_str());
+                //log_("content = %s\n", defcontent.c_str());
             }
         }
     }

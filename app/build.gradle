@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
   compileSdkVersion 24
-  buildToolsVersion "25.0.0"
+  buildToolsVersion "28.0.3"
   defaultConfig {
     applicationId "com.withparadox2.simpledict"
     minSdkVersion 21
@@ -10,8 +10,11 @@ android {
     versionCode 1
     versionName "1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    ndk {
-      abiFilters 'armeabi-v7a', 'armeabi'
+    externalNativeBuild {
+      cmake {
+        cppFlags ""
+        abiFilters 'armeabi-v7a'
+      }
     }
   }
   buildTypes {
@@ -21,8 +24,9 @@ android {
     }
   }
   externalNativeBuild {
-    ndkBuild {
-      path "src/main/jni/Android.mk"
+    cmake {
+      version "3.10.2"
+      path './src/main/jni/CMakeLists.txt'
     }
   }
   def propsFile = rootProject.file('keystore.properties')

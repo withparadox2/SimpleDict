@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.6)
+
+add_library(
+    dict SHARED
+    main.cpp
+    dict.cpp
+    bridge.cpp
+    util.cpp
+    ld2reader.cpp
+)
+
+set (ANDROID "1")
+
+find_library(
+    log-lib
+    log
+)
+
+find_library(
+    zip-lib
+    z
+)
+
+target_link_libraries (
+    dict
+    ${log-lib}
+    ${zip-lib}
+)
