@@ -119,6 +119,11 @@ void Ld2Extractor::processRes(int offset) {
 }
 
 void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, int dataSize, int encryptSize, int decryptSize, int srcPartLen) {
+#ifndef ANDROID
+    if (type == 4) {
+        return;
+    }
+#endif
     int partCount = decryptSize / srcPartLen;
     if (decryptSize % srcPartLen != 0) {
         ++partCount;
@@ -160,6 +165,12 @@ void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, 
     int totalCount = cellCount - 1;
     write4(ofs, totalCount);
 
+#ifndef ANDROID
+    ofstream ofs2;
+    string wordFilePath = sdPath + ".txt";
+    ofs2.open(wordFilePath.c_str(), ofstream::out);
+#endif
+
     for (int i = 1; i < cellCount; i++) {
         int keyPosBeg = keyPosList[i - 1];
         int keyPosEnd = keyPosList[i];
@@ -174,6 +185,9 @@ void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, 
                 totalCount--;
                 continue;
             }
+#ifndef ANDROID
+            ofs2 << fileName << endl;
+#endif
             toLower(fileName);
         }
 
@@ -216,6 +230,9 @@ void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, 
     ofs.seekp(totalCountPos, ofs.beg);
     write4(ofs, totalCount);
     ofs.seekp(0, ofs.end);
+#ifndef ANDROID
+    ofs2.close();
+#endif
 }
 
 SdReader::SdReader(const string ld2Path, const string sdPath, const string resPath) 
