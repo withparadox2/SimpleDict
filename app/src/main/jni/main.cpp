@@ -17,7 +17,7 @@ using namespace std;
 unordered_map<string, Dict*> pathToDict;
 
 int main() {
-    installDict("dict/Oxford+Advanced+Learner's+English-Chinese+Dictionary.ld2", true);
+    installDict("dict/dict.ld2", true);
 }
 
 void installDict(const char* path, bool isActive) {
