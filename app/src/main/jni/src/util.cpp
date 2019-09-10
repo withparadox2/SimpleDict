@@ -69,3 +69,13 @@ void toLower(string& src) {
         }
     }
 }
+
+bool isWordValid(string& word) {
+    for (int i = 0; i < word.size(); i++) {
+        char& c = word.at(i);
+        if (c < 32 || c > 126) {
+            return false;
+        }
+    }
+    return true;
+}

@@ -168,7 +168,12 @@ void Ld2Extractor::processCommon(int type, int offset, int keyPos, int keySize, 
         int namePos = keyPos + keyPosBeg;
 
         string fileName(rPtr + namePos, nameLen);
+
         if (type == 3) {
+            if (!isWordValid(fileName)) {
+                totalCount--;
+                continue;
+            }
             toLower(fileName);
         }
 

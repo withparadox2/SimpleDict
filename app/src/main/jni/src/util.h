@@ -48,5 +48,9 @@ T readNum(ifstream& input, int offset, int len) {
 
 int getStreamSize(ifstream& ifs);
 void toLower(string& src);
-
+/**
+ * Test whether the given word is valid by checking if each character
+ * is an ASCII code
+ */
+bool isWordValid(string& word);
 #endif
