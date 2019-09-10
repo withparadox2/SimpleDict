@@ -12,6 +12,8 @@ if (ANDROID)
     add_library(
         dict SHARED
         ${SourceSet}
+
+        # Android related stuff
         ./src/bridge.cpp
     )
     find_library(
@@ -30,5 +32,7 @@ if (ANDROID)
     )
 else()
     add_executable(dict ${SourceSet})
+
+    # Should install package mingw32-libz with class of dev in MinGW Installation Manager
     target_link_libraries(dict libz.a)
 endif()
