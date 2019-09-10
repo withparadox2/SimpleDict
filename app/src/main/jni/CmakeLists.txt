@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 3.6)
 
 set(
     SourceSet
-    main.cpp
-    dict.cpp
-    util.cpp
-    ld2reader.cpp
+    ./src/main.cpp
+    ./src/dict.cpp
+    ./src/util.cpp
+    ./src/ld2reader.cpp
 )
 
 if (ANDROID)
     add_library(
         dict SHARED
         ${SourceSet}
-        bridge.cpp
+        ./src/bridge.cpp
     )
     find_library(
         log-lib
