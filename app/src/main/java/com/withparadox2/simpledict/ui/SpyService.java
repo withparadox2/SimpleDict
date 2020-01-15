@@ -1,6 +1,8 @@
 package com.withparadox2.simpledict.ui;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ClipData;
@@ -8,10 +10,13 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import com.withparadox2.simpledict.NativeLib;
@@ -66,6 +71,7 @@ public class SpyService extends Service {
     return null;
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.O)
   @Override public void onCreate() {
     super.onCreate();
     ClipboardManager clipboard =
@@ -78,7 +84,7 @@ public class SpyService extends Service {
     resultIntent.setAction(Intent.ACTION_MAIN);
     PendingIntent resultPendingIntent =
         PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-    Notification notification = new NotificationCompat.Builder(this).setContentTitle("SimpleDict")
+    Notification notification = new NotificationCompat.Builder(this, createNotificationChannel("spy_service", "spy_service")).setContentTitle("SimpleDict")
         .setLargeIcon(getIconBitmap())
         .setSmallIcon(R.drawable.ic_launcher)
         .setContentIntent(resultPendingIntent)
@@ -89,6 +95,24 @@ public class SpyService extends Service {
   private Bitmap getIconBitmap() {
     Drawable drawable = getResources().getDrawable(R.drawable.ic_launcher);
     return ((BitmapDrawable) (drawable)).getBitmap();
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.O)
+  private String createNotificationChannel(String channelId, String channelName) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          NotificationChannel chan = new NotificationChannel(channelId,
+                  channelName, NotificationManager.IMPORTANCE_NONE);
+          chan.setLightColor(Color.BLUE);
+          chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+
+          NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+          service.createNotificationChannel(chan);
+          return channelId;
+      } else {
+          // If earlier version channel ID is not used
+          // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
+          return "";
+      }
   }
 
   private class SearchTask implements Runnable {
