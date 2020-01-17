@@ -37,7 +37,7 @@ public class SpyService extends Service {
           ClipboardManager clipboard =
               (ClipboardManager) SpyService.this.getSystemService(Context.CLIPBOARD_SERVICE);
           final ClipData clipdata = clipboard.getPrimaryClip();
-          if (clipdata.getItemCount() > 0) {
+          if (clipdata != null && clipdata.getItemCount() > 0) {
             if (clipdata.getItemAt(0).getText() != null) {
               String text = clipdata.getItemAt(0).getText().toString();
               if (mLastTask == null || mLastTask.isDone() || !mLastTask.isSame(text)) {
